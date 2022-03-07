@@ -160,17 +160,12 @@ public class IDE extends javax.swing.JFrame {
                 String interrogacion = token;
                 if (tokens.hasMoreTokens()) {
                     String siguienteToken = tokens.nextToken();
-                    if (siguienteToken.compareTo(">") == 0) {
+                    if (siguienteToken.compareTo("?") == 0) {
                         listaTokens.add(interrogacion + siguienteToken);
                     } else {
                         listaTokens.add(interrogacion);
                         listaTokens.add(siguienteToken);
                     }
-                }
-            } else if (token.contains(":")) {
-                StringTokenizer subToken = new StringTokenizer(token, ":", true);
-                while (subToken.hasMoreTokens()) {
-                    listaTokens.add(subToken.nextToken());
                 }
             } else {
                 listaTokens.add(token);
