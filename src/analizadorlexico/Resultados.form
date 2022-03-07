@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPaneSimbolos" alignment="0" min="-2" pref="372" max="-2" attributes="0"/>
+                  <Component id="jLabelSimbolos" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="127" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPaneTokens" min="-2" pref="412" max="-2" attributes="0"/>
+                  <Component id="jLabelTokens" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace pref="47" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabelSimbolos" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabelTokens" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jScrollPaneSimbolos" max="32767" attributes="0"/>
+                  <Component id="jScrollPaneTokens" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JLabel" name="jLabelSimbolos">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Tabla S&#xed;mbolos"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JScrollPane" name="jScrollPaneSimbolos">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTable" name="jTableSimbolos">
+          <Properties>
+            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+              <Table columnCount="3" rowCount="28">
+                <Column editable="false" title="Lexema" type="java.lang.String">
+                  <Data value="Int"/>
+                  <Data value="Float"/>
+                  <Data value="Str"/>
+                  <Data value="Bool"/>
+                  <Data value="print"/>
+                  <Data value="input"/>
+                  <Data value="compare"/>
+                  <Data value="else"/>
+                  <Data value="endCompare"/>
+                  <Data value="loop"/>
+                  <Data value="endLoop"/>
+                  <Data value="programStart"/>
+                  <Data value="programEnd"/>
+                  <Data value="~"/>
+                  <Data value=":"/>
+                  <Data value="+"/>
+                  <Data value="-"/>
+                  <Data value="*"/>
+                  <Data value="/"/>
+                  <Data value="^"/>
+                  <Data value="-&gt;"/>
+                  <Data value="&lt;&gt;"/>
+                  <Data value="="/>
+                  <Data value="&lt;"/>
+                  <Data value="&gt;"/>
+                  <Data value="&#xf1;"/>
+                  <Data value="?"/>
+                  <Data value="&#xbf;"/>
+                </Column>
+                <Column editable="false" title="Identificador" type="java.lang.String">
+                  <Data value="i"/>
+                  <Data value="f"/>
+                  <Data value="s"/>
+                  <Data value="b"/>
+                  <Data value="p"/>
+                  <Data value="in"/>
+                  <Data value="c"/>
+                  <Data value="e"/>
+                  <Data value="ec"/>
+                  <Data value="l"/>
+                  <Data value="el"/>
+                  <Data value="ps"/>
+                  <Data value="pe"/>
+                  <Data value="~"/>
+                  <Data value=":"/>
+                  <Data value="+"/>
+                  <Data value="-"/>
+                  <Data value="*"/>
+                  <Data value="/"/>
+                  <Data value="^"/>
+                  <Data value="-&gt;"/>
+                  <Data value="&lt;&gt;"/>
+                  <Data value="="/>
+                  <Data value="&lt;"/>
+                  <Data value="&gt;"/>
+                  <Data value="&#xf1;"/>
+                  <Data value="?"/>
+                  <Data value="&#xbf;"/>
+                </Column>
+                <Column editable="false" title="Categor&#xed;a" type="java.lang.String">
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="PR"/>
+                  <Data value="SEP"/>
+                  <Data value="SEP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                  <Data value="OP"/>
+                </Column>
+              </Table>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[0, 200]"/>
+            </Property>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="jLabelTokens">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Tabla Tokens"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JScrollPane" name="jScrollPaneTokens">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTable" name="jTableTokens">
+          <Properties>
+            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+              <Table columnCount="3" rowCount="0">
+                <Column editable="false" title="Lexema" type="java.lang.Object"/>
+                <Column editable="false" title="Identificador" type="java.lang.Object"/>
+                <Column editable="false" title="Categor&#xed;a" type="java.lang.Object"/>
+              </Table>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[0, 200]"/>
+            </Property>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
