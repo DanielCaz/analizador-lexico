@@ -48,7 +48,7 @@ public class Resultados extends javax.swing.JFrame {
                     simbolos.put(fila, datos);
                     modelSimbolos.addRow(datos);
                 }
-            }  else {
+            } else {
                 JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.WARNING_MESSAGE);
 
                 WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
@@ -89,8 +89,9 @@ public class Resultados extends javax.swing.JFrame {
         simbolos.put("<", new String[]{"<", "OP"});
         simbolos.put(">", new String[]{">", "OP"});
         simbolos.put("ñ", new String[]{"ñ", "OP"});
-        simbolos.put("?", new String[]{"?", "COM"});
+        simbolos.put("??", new String[]{"??", "COM"});
         simbolos.put("¿", new String[]{"¿", "COM"});
+        simbolos.put("?", new String[]{"?", "COM"});
         return simbolos;
     }
 
@@ -142,8 +143,9 @@ public class Resultados extends javax.swing.JFrame {
                 {"<", "<", "OP"},
                 {">", ">", "OP"},
                 {"ñ", "ñ", "OP"},
-                {"?", "?", "OP"},
-                {"¿", "¿", "OP"}
+                {"??", "??", "COM"},
+                {"¿", "¿", "COM"},
+                {"?", "¿", "COM"}
             },
             new String [] {
                 "Lexema", "Identificador", "Categoría"

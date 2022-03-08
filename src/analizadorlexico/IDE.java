@@ -113,65 +113,66 @@ public class IDE extends javax.swing.JFrame {
 
     private void jMenuItemArchivoEjecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemArchivoEjecutarActionPerformed
         String codigoFuente = jTextAreaCodigo.getText();
-        StringTokenizer tokens = new StringTokenizer(codigoFuente);
+        StringTokenizer lineas = new StringTokenizer(codigoFuente, "\n");
         LinkedList<String> listaTokens = new LinkedList<>();
-
-        while (tokens.hasMoreTokens()) {
-            String token = tokens.nextToken();
-            if (token.startsWith("'")) {
-                String texto = token;
-                String siguienteToken = "";
-                while (!siguienteToken.endsWith("'") && tokens.hasMoreTokens()) {
-                    siguienteToken = tokens.nextToken();
-                    texto += " " + siguienteToken;
-                }
-                listaTokens.add(texto);
-            } else if (token.startsWith("¿")) {
-                String comentario = token;
-                String siguienteToken = "";
-                while (!siguienteToken.endsWith("?") && tokens.hasMoreTokens()) {
-                    siguienteToken = tokens.nextToken();
-                    comentario += " " + siguienteToken;
-                }
-                listaTokens.add(comentario);
-            } else if (token.compareTo("-") == 0) {
-                String guion = token;
-                if (tokens.hasMoreTokens()) {
-                    String siguienteToken = tokens.nextToken();
-                    if (siguienteToken.compareTo(">") == 0) {
-                        listaTokens.add(guion + siguienteToken);
+        while (lineas.hasMoreTokens()) {
+            String linea = lineas.nextToken();
+            StringTokenizer tokens = new StringTokenizer(linea, "=+*/~:", true);
+            while (tokens.hasMoreTokens()) {
+                String token = tokens.nextToken();
+                StringTokenizer masTokens = new StringTokenizer(token);
+                while (masTokens.hasMoreTokens()) {
+                    String ultimoToken = masTokens.nextToken();
+                    if (ultimoToken.startsWith("'")) {
+                        String texto = ultimoToken;
+                        String siguienteToken = "";
+                        while (!siguienteToken.endsWith("'") && masTokens.hasMoreTokens()) {
+                            siguienteToken = masTokens.nextToken();
+                            texto += " " + siguienteToken;
+                        }
+                        listaTokens.add(texto);
+                    } else if (ultimoToken.startsWith("¿")) {
+                        String siguienteToken = "";
+                        listaTokens.add("¿");
+                        while (!siguienteToken.endsWith("?") && masTokens.hasMoreTokens()) { //Descartamos todos los comentarios
+                            masTokens.nextToken();
+                        }
+                        listaTokens.add("?");
+                    } else if (ultimoToken.contains("<>")) {
+                        StringTokenizer tokenizer = new StringTokenizer(ultimoToken, "<>", true);
+                        String tokenizerSiguiente = "";
+                        while (tokenizerSiguiente.compareTo("<") != 0 && tokenizer.hasMoreTokens()) {
+                            tokenizerSiguiente = tokenizer.nextToken();
+                            listaTokens.add(tokenizerSiguiente);
+                        }
+                        listaTokens.add(tokenizerSiguiente + ">");
+                        tokenizer.nextToken();
+                        while (tokenizer.hasMoreTokens()) {
+                            listaTokens.add(tokenizer.nextToken());
+                        }
+                    } else if (ultimoToken.contains("->")) {
+                        StringTokenizer tokenizer = new StringTokenizer(ultimoToken, "->", true);
+                        String tokenizerSiguiente = "";
+                        while (tokenizerSiguiente.compareTo("-") != 0 && tokenizer.hasMoreTokens()) {
+                            tokenizerSiguiente = tokenizer.nextToken();
+                            listaTokens.add(tokenizerSiguiente);
+                        }
+                        listaTokens.add(tokenizerSiguiente + ">");
+                        tokenizer.nextToken();
+                        while (tokenizer.hasMoreTokens()) {
+                            listaTokens.add(tokenizer.nextToken());
+                        }
+                    } else if (ultimoToken.contains("-")) {
+                        StringTokenizer tokenizer = new StringTokenizer(ultimoToken, "-", true);
+                        while (tokenizer.hasMoreTokens()) {
+                            listaTokens.add(tokenizer.nextToken());
+                        }
                     } else {
-                        listaTokens.add(guion);
-                        listaTokens.add(siguienteToken);
+                        listaTokens.add(ultimoToken);
                     }
                 }
-            } else if (token.compareTo("<") == 0) {
-                String menorQue = token;
-                if (tokens.hasMoreTokens()) {
-                    String siguienteToken = tokens.nextToken();
-                    if (siguienteToken.compareTo(">") == 0) {
-                        listaTokens.add(menorQue + siguienteToken);
-                    } else {
-                        listaTokens.add(menorQue);
-                        listaTokens.add(siguienteToken);
-                    }
-                }
-            } else if (token.compareTo("?") == 0) {
-                String interrogacion = token;
-                if (tokens.hasMoreTokens()) {
-                    String siguienteToken = tokens.nextToken();
-                    if (siguienteToken.compareTo("?") == 0) {
-                        listaTokens.add(interrogacion + siguienteToken);
-                    } else {
-                        listaTokens.add(interrogacion);
-                        listaTokens.add(siguienteToken);
-                    }
-                }
-            } else {
-                listaTokens.add(token);
             }
         }
-
         Resultados resultados = new Resultados(listaTokens);
         resultados.setLocationRelativeTo(null);
         resultados.setVisible(true);
