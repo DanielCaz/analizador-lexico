@@ -66,7 +66,6 @@ public class Resultados extends javax.swing.JFrame {
         simbolos.put("Int", new String[]{"i", "PR"});
         simbolos.put("Float", new String[]{"f", "PR"});
         simbolos.put("Str", new String[]{"s", "PR"});
-        simbolos.put("Bool", new String[]{"b", "PR"});
         simbolos.put("print", new String[]{"p", "PR"});
         simbolos.put("input", new String[]{"in", "PR"});
         simbolos.put("compare", new String[]{"c", "PR"});
@@ -120,7 +119,6 @@ public class Resultados extends javax.swing.JFrame {
                 {"Int", "i", "PR"},
                 {"Float", "f", "PR"},
                 {"Str", "s", "PR"},
-                {"Bool", "b", "PR"},
                 {"print", "p", "PR"},
                 {"input", "in", "PR"},
                 {"compare", "c", "PR"},
