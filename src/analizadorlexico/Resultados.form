@@ -72,7 +72,7 @@
         <Component class="javax.swing.JTable" name="jTableSimbolos">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="3" rowCount="28">
+              <Table columnCount="3" rowCount="23">
                 <Column editable="false" title="Lexema" type="java.lang.String">
                   <Data value="Int"/>
                   <Data value="Float"/>
@@ -92,16 +92,11 @@
                   <Data value="-"/>
                   <Data value="*"/>
                   <Data value="/"/>
-                  <Data value="^"/>
                   <Data value="-&gt;"/>
                   <Data value="&lt;&gt;"/>
                   <Data value="="/>
                   <Data value="&lt;"/>
                   <Data value="&gt;"/>
-                  <Data value="&#xf1;"/>
-                  <Data value="??"/>
-                  <Data value="&#xbf;"/>
-                  <Data value="?"/>
                 </Column>
                 <Column editable="false" title="Identificador" type="java.lang.String">
                   <Data value="i"/>
@@ -122,16 +117,11 @@
                   <Data value="-"/>
                   <Data value="*"/>
                   <Data value="/"/>
-                  <Data value="^"/>
                   <Data value="-&gt;"/>
                   <Data value="&lt;&gt;"/>
                   <Data value="="/>
                   <Data value="&lt;"/>
                   <Data value="&gt;"/>
-                  <Data value="&#xf1;"/>
-                  <Data value="??"/>
-                  <Data value="&#xbf;"/>
-                  <Data value="&#xbf;"/>
                 </Column>
                 <Column editable="false" title="Categor&#xed;a" type="java.lang.String">
                   <Data value="PR"/>
@@ -157,11 +147,6 @@
                   <Data value="OP"/>
                   <Data value="OP"/>
                   <Data value="OP"/>
-                  <Data value="OP"/>
-                  <Data value="OP"/>
-                  <Data value="COM"/>
-                  <Data value="COM"/>
-                  <Data value="COM"/>
                 </Column>
               </Table>
             </Property>

@@ -3,11 +3,14 @@ package analizadorlexico;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
 public class IDE extends javax.swing.JFrame {
 
@@ -16,6 +19,29 @@ public class IDE extends javax.swing.JFrame {
      */
     public IDE() {
         initComponents();
+
+        jFileChooserAbrir.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().endsWith(".upl");
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.upl (UPL)";
+            }
+        });
+        jFileChooserGuardar.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(".upl");
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.upl (UPL)";
+            }
+        });
     }
 
     /**
@@ -132,12 +158,8 @@ public class IDE extends javax.swing.JFrame {
                         }
                         listaTokens.add(texto);
                     } else if (ultimoToken.startsWith("¿")) {
-                        String siguienteToken = "";
-                        listaTokens.add("¿");
-                        while (!siguienteToken.endsWith("?") && masTokens.hasMoreTokens()) { //Descartamos todos los comentarios
-                            masTokens.nextToken();
+                        while (masTokens.hasMoreTokens() && !masTokens.nextToken().endsWith("?")) { //Descartamos todos los comentarios
                         }
-                        listaTokens.add("?");
                     } else if (ultimoToken.contains("<>")) {
                         StringTokenizer tokenizer = new StringTokenizer(ultimoToken, "<>", true);
                         String tokenizerSiguiente = "";
@@ -155,7 +177,6 @@ public class IDE extends javax.swing.JFrame {
                         String tokenizerSiguiente = "";
                         while (tokenizerSiguiente.compareTo("-") != 0 && tokenizer.hasMoreTokens()) {
                             tokenizerSiguiente = tokenizer.nextToken();
-                            listaTokens.add(tokenizerSiguiente);
                         }
                         listaTokens.add(tokenizerSiguiente + ">");
                         tokenizer.nextToken();
@@ -213,7 +234,11 @@ public class IDE extends javax.swing.JFrame {
     private void jFileChooserGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserGuardarActionPerformed
         if (evt.getActionCommand().compareTo("ApproveSelection") == 0) {
             String ubicacion = jFileChooserGuardar.getSelectedFile().getPath();
+            if (!ubicacion.endsWith(".upl")) {
+                ubicacion += ".upl";
+            }
             guardarArchivo(jTextAreaCodigo.getText(), ubicacion);
+            JOptionPane.showMessageDialog(null, "Se guardó en la dirección \"" + ubicacion + "\"", "Archivo guardado", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_jFileChooserGuardarActionPerformed
 

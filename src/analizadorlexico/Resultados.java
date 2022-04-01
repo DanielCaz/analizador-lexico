@@ -10,44 +10,51 @@ import javax.swing.table.DefaultTableModel;
 public class Resultados extends javax.swing.JFrame {
 
     private static LinkedList<String> listaTokens;
+    private final LinkedList<Token> objetosTokens;
+    private final Hashtable<String, Token> simbolos;
 
     /**
      * Creates new form Resultados
      */
     public Resultados(LinkedList<String> listaTokens) {
         initComponents();
-        this.listaTokens = listaTokens;
+        Resultados.listaTokens = listaTokens;
+        objetosTokens = new LinkedList<>();
 
-        Hashtable<String, String[]> simbolos = getSimbolos();
+        simbolos = getSimbolos();
         DefaultTableModel modelSimbolos = (DefaultTableModel) jTableSimbolos.getModel();
 
         DefaultTableModel model = (DefaultTableModel) jTableTokens.getModel();
         String[] filas = (String[]) listaTokens.toArray(new String[listaTokens.size()]);
         for (String fila : filas) {
             if (simbolos.containsKey(fila)) {
-                String[] datos = simbolos.get(fila);
-                model.addRow(new String[]{fila, datos[0], datos[1]});
+                Token token = simbolos.get(fila);
+                objetosTokens.add(token);
+                model.addRow(new String[]{fila, token.getIdentificador(), token.getCategoria()});
             } else if (fila.matches("^(\\$\\w+)$")) {
-                String[] datos = new String[]{fila, "V", "VAR"};
-                model.addRow(datos);
+                Token token = new Token(fila, "V", "VAR");
+                model.addRow(token.toStringArray());
                 if (!simbolos.containsKey(fila)) {
-                    simbolos.put(fila, datos);
-                    modelSimbolos.addRow(datos);
+                    simbolos.put(fila, token);
+                    modelSimbolos.addRow(token.toStringArray());
                 }
+                objetosTokens.add(token);
             } else if (fila.matches("^('.*')$")) {
-                String[] datos = new String[]{fila, "T", "TEX"};
-                model.addRow(datos);
+                Token token = new Token(fila, "T", "TEX");
+                model.addRow(token.toStringArray());
                 if (!simbolos.containsKey(fila)) {
-                    simbolos.put(fila, datos);
-                    modelSimbolos.addRow(datos);
+                    simbolos.put(fila, token);
+                    modelSimbolos.addRow(token.toStringArray());
                 }
+                objetosTokens.add(token);
             } else if (fila.matches("^(\\d+|(\\d+\\.\\d+))$")) {
-                String[] datos = new String[]{fila, "N", "NUM"};
-                model.addRow(datos);
+                Token token = new Token(fila, "N", "NUM");
+                model.addRow(token.toStringArray());
                 if (!simbolos.containsKey(fila)) {
-                    simbolos.put(fila, datos);
-                    modelSimbolos.addRow(datos);
+                    simbolos.put(fila, token);
+                    modelSimbolos.addRow(token.toStringArray());
                 }
+                objetosTokens.add(token);
             } else {
                 JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.WARNING_MESSAGE);
 
@@ -61,36 +68,31 @@ public class Resultados extends javax.swing.JFrame {
         }
     }
 
-    private Hashtable<String, String[]> getSimbolos() {
-        Hashtable<String, String[]> simbolos = new Hashtable<>();
-        simbolos.put("Int", new String[]{"i", "PR"});
-        simbolos.put("Float", new String[]{"f", "PR"});
-        simbolos.put("Str", new String[]{"s", "PR"});
-        simbolos.put("print", new String[]{"p", "PR"});
-        simbolos.put("input", new String[]{"in", "PR"});
-        simbolos.put("compare", new String[]{"c", "PR"});
-        simbolos.put("else", new String[]{"e", "PR"});
-        simbolos.put("endCompare", new String[]{"ec", "PR"});
-        simbolos.put("loop", new String[]{"l", "PR"});
-        simbolos.put("endLoop", new String[]{"el", "PR"});
-        simbolos.put("programStart", new String[]{"ps", "PR"});
-        simbolos.put("programEnd", new String[]{"pe", "PR"});
-        simbolos.put("~", new String[]{"~", "SEP"});
-        simbolos.put(":", new String[]{":", "SEP"});
-        simbolos.put("+", new String[]{"+", "OP"});
-        simbolos.put("-", new String[]{"-", "OP"});
-        simbolos.put("*", new String[]{"*", "OP"});
-        simbolos.put("/", new String[]{"*", "OP"});
-        simbolos.put("^", new String[]{"^", "OP"});
-        simbolos.put("->", new String[]{"->", "OP"});
-        simbolos.put("<>", new String[]{"<>", "OP"});
-        simbolos.put("=", new String[]{"=", "OP"});
-        simbolos.put("<", new String[]{"<", "OP"});
-        simbolos.put(">", new String[]{">", "OP"});
-        simbolos.put("ñ", new String[]{"ñ", "OP"});
-        simbolos.put("??", new String[]{"??", "COM"});
-        simbolos.put("¿", new String[]{"¿", "COM"});
-        simbolos.put("?", new String[]{"?", "COM"});
+    private Hashtable<String, Token> getSimbolos() {
+        Hashtable<String, Token> simbolos = new Hashtable<>();
+        simbolos.put("Int", new Token("Int", "I", "PR"));
+        simbolos.put("Float", new Token("Float", "F", "PR"));
+        simbolos.put("Str", new Token("Str", "S", "PR"));
+        simbolos.put("print", new Token("print", "print", "PR"));
+        simbolos.put("input", new Token("input", "in", "PR"));
+        simbolos.put("compare", new Token("compare", "compare", "PR"));
+        simbolos.put("else", new Token("else", "else", "PR"));
+        simbolos.put("endCompare", new Token("endCompare", "endCompare", "PR"));
+        simbolos.put("loop", new Token("loop", "loop", "PR"));
+        simbolos.put("endLoop", new Token("endLoop", "endLoop", "PR"));
+        simbolos.put("programStart", new Token("programStart", "programStart", "PR"));
+        simbolos.put("programEnd", new Token("programEnd", "programEnd", "PR"));
+        simbolos.put("~", new Token("~", "~", "SEP"));
+        simbolos.put(":", new Token(":", ":", "SEP"));
+        simbolos.put("+", new Token("+", "+", "OP"));
+        simbolos.put("-", new Token("-", "-", "OP"));
+        simbolos.put("*", new Token("*", "*", "OP"));
+        simbolos.put("/", new Token("/", "*", "OP"));
+        simbolos.put("->", new Token("->", "->", "OP"));
+        simbolos.put("<>", new Token("<>", "<>", "OP"));
+        simbolos.put("=", new Token("=", "=", "OP"));
+        simbolos.put("<", new Token("<", "<", "OP"));
+        simbolos.put(">", new Token(">", ">", "OP"));
         return simbolos;
     }
 
@@ -134,16 +136,11 @@ public class Resultados extends javax.swing.JFrame {
                 {"-", "-", "OP"},
                 {"*", "*", "OP"},
                 {"/", "/", "OP"},
-                {"^", "^", "OP"},
                 {"->", "->", "OP"},
                 {"<>", "<>", "OP"},
                 {"=", "=", "OP"},
                 {"<", "<", "OP"},
-                {">", ">", "OP"},
-                {"ñ", "ñ", "OP"},
-                {"??", "??", "COM"},
-                {"¿", "¿", "COM"},
-                {"?", "¿", "COM"}
+                {">", ">", "OP"}
             },
             new String [] {
                 "Lexema", "Identificador", "Categoría"
