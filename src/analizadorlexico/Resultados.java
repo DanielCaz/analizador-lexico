@@ -4,13 +4,14 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Stack;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class Resultados extends javax.swing.JFrame {
 
     private static LinkedList<String> listaTokens;
-    private final LinkedList<Token> objetosTokens;
+    private final LinkedList<Token> entrada;
     private final Hashtable<String, Token> simbolos;
 
     /**
@@ -19,7 +20,7 @@ public class Resultados extends javax.swing.JFrame {
     public Resultados(LinkedList<String> listaTokens) {
         initComponents();
         Resultados.listaTokens = listaTokens;
-        objetosTokens = new LinkedList<>();
+        entrada = new LinkedList<>();
 
         simbolos = getSimbolos();
         DefaultTableModel modelSimbolos = (DefaultTableModel) jTableSimbolos.getModel();
@@ -29,7 +30,7 @@ public class Resultados extends javax.swing.JFrame {
         for (String fila : filas) {
             if (simbolos.containsKey(fila)) {
                 Token token = simbolos.get(fila);
-                objetosTokens.add(token);
+                entrada.add(token);
                 model.addRow(new String[]{fila, token.getIdentificador(), token.getCategoria()});
             } else if (fila.matches("^(\\$\\w+)$")) {
                 Token token = new Token(fila, "V", "VAR");
@@ -38,7 +39,7 @@ public class Resultados extends javax.swing.JFrame {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
                 }
-                objetosTokens.add(token);
+                entrada.add(token);
             } else if (fila.matches("^('.*')$")) {
                 Token token = new Token(fila, "T", "TEX");
                 model.addRow(token.toStringArray());
@@ -46,7 +47,7 @@ public class Resultados extends javax.swing.JFrame {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
                 }
-                objetosTokens.add(token);
+                entrada.add(token);
             } else if (fila.matches("^(\\d+|(\\d+\\.\\d+))$")) {
                 Token token = new Token(fila, "N", "NUM");
                 model.addRow(token.toStringArray());
@@ -54,7 +55,7 @@ public class Resultados extends javax.swing.JFrame {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
                 }
-                objetosTokens.add(token);
+                entrada.add(token);
             } else {
                 JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.WARNING_MESSAGE);
 
@@ -66,7 +67,7 @@ public class Resultados extends javax.swing.JFrame {
                 break;
             }
         }
-        
+
         analisisSintacticoTabular();
     }
 
@@ -74,29 +75,34 @@ public class Resultados extends javax.swing.JFrame {
         Hashtable<String, Hashtable<String, String>> tabla = getTablaSintacticaTabular();
         //TODO: Hacer análisis sintáctico
     }
-    
+
     private Hashtable<String, Hashtable<String, String>> getTablaSintacticaTabular() {
         Hashtable<String, Hashtable<String, String>> table = new Hashtable<>();
-        
+
         Hashtable<String, String> colProg = new Hashtable<>();
         colProg.put("programStart", "programStart sent programEnd");
         table.put("prog", colProg);
-        
+
         Hashtable<String, String> colSent = new Hashtable<>();
-        colSent.put("v", "asign sent");
+        colSent.put("V", "asign sent");
+        colSent.put("var", "decl sent");
         colSent.put("compare", "comp sent");
         colSent.put("loop", "cic sent");
         colSent.put("print", "imp sent");
         colSent.put("input", "leer sent");
+        colSent.put("endCompare", "");
+        colSent.put("endLoop", "");
+        colSent.put("programEnd", "");
+        colSent.put(":", "");
         table.put("sent", colSent);
-        
+
         Hashtable<String, String> colDecl = new Hashtable<>();
-        colDecl.put("decl", "var v : tipos vals");
+        colDecl.put("var", "var V : tipos vals");
         table.put("decl", colDecl);
-        
+
         Hashtable<String, String> colVals = new Hashtable<>();
         colVals.put("->", "-> valsAux");
-        colVals.put("v", "");
+        colVals.put("V", "");
         colVals.put("var", "");
         colVals.put(":", "");
         colVals.put("compare", "");
@@ -107,7 +113,7 @@ public class Resultados extends javax.swing.JFrame {
         colVals.put("input", "");
         colVals.put("programEnd", "");
         table.put("vals", colVals);
-        
+
         Hashtable<String, String> colValsAux = new Hashtable<>();
         colValsAux.put("op", "op");
         colValsAux.put("N", "op");
@@ -115,15 +121,15 @@ public class Resultados extends javax.swing.JFrame {
         colValsAux.put("V", "op");
         colValsAux.put("T", "T");
         table.put("valsAux", colValsAux);
-        
+
         Hashtable<String, String> colAsign = new Hashtable<>();
-        colAsign.put("v", "v -> valsAux");
+        colAsign.put("V", "V -> valsAux");
         table.put("asign", colAsign);
-        
+
         Hashtable<String, String> colImp = new Hashtable<>();
         colImp.put("print", "print cad");
         table.put("imp", colImp);
-        
+
         Hashtable<String, String> colCad = new Hashtable<>();
         colCad.put("(", "op cadAux");
         colCad.put("N", "op cadAux");
@@ -131,10 +137,10 @@ public class Resultados extends javax.swing.JFrame {
         colCad.put("V", "op cadAux");
         colCad.put("T", "T cadAux");
         table.put("cad", colCad);
-        
+
         Hashtable<String, String> colCadAux = new Hashtable<>();
         colCadAux.put("~", "~ cad");
-        colCadAux.put("v", "");
+        colCadAux.put("V", "");
         colCadAux.put("var", "");
         colCadAux.put(":", "");
         colCadAux.put("compare", "");
@@ -145,16 +151,16 @@ public class Resultados extends javax.swing.JFrame {
         colCadAux.put("input", "");
         colCadAux.put("programEnd", "");
         table.put("cadAux", colCadAux);
-        
+
         Hashtable<String, String> colOp = new Hashtable<>();
         colOp.put("(", "(op) opAux");
         colOp.put("N", "nums opAux");
         colOp.put("F", "nums opAux");
         colOp.put("V", "nums opAux");
         table.put("op", colOp);
-        
+
         Hashtable<String, String> colOpAux = new Hashtable<>();
-        colOpAux.put("v", "");
+        colOpAux.put("V", "");
         colOpAux.put("var", "");
         colOpAux.put(":", "");
         colOpAux.put("compare", "");
@@ -175,57 +181,57 @@ public class Resultados extends javax.swing.JFrame {
         colOpAux.put("*", "ops op");
         colOpAux.put("/", "ops op");
         table.put("opAux", colOpAux);
-        
+
         Hashtable<String, String> colOps = new Hashtable<>();
         colOps.put("+", "+");
         colOps.put("-", "-");
         colOps.put("*", "*");
         colOps.put("/", "/");
         table.put("ops", colOps);
-        
+
         Hashtable<String, String> colNums = new Hashtable<>();
         colNums.put("N", "N");
         colNums.put("F", "F");
         colNums.put("V", "V");
         table.put("nums", colNums);
-        
+
         Hashtable<String, String> colTipos = new Hashtable<>();
         colTipos.put("I", "I");
         colTipos.put("F", "F");
         colTipos.put("S", "S");
         table.put("tipos", colTipos);
-        
+
         Hashtable<String, String> colLeer = new Hashtable<>();
-        colLeer.put("input", "input -> v");
+        colLeer.put("input", "input -> V");
         table.put("leer", colLeer);
-        
+
         Hashtable<String, String> colComp = new Hashtable<>();
         colComp.put("compare", "compare op opcomps op : sent compAux endCompare");
         table.put("comp", colComp);
-        
+
         Hashtable<String, String> colCompAux = new Hashtable<>();
         colCompAux.put(":", ": else : sent");
         table.put("compAux", colCompAux);
-        
+
         Hashtable<String, String> colCic = new Hashtable<>();
         colCic.put("loop", "loop op opcomps op : sent endLoop");
         table.put("cic", colCic);
-        
+
         Hashtable<String, String> colOpcomps = new Hashtable<>();
         colOpcomps.put("<", "<");
         colOpcomps.put(">", ">");
         colOpcomps.put("<>", "<>");
         colOpcomps.put("=", "=");
         table.put("opcomps", colOpcomps);
-        
+
         return table;
     }
 
     private Hashtable<String, Token> getSimbolos() {
         Hashtable<String, Token> simbolos = new Hashtable<>();
-        simbolos.put("Int", new Token("Int", "i", "PR"));
-        simbolos.put("Float", new Token("Float", "f", "PR"));
-        simbolos.put("Str", new Token("Str", "s", "PR"));
+        simbolos.put("Int", new Token("Int", "I", "PR"));
+        simbolos.put("Float", new Token("Float", "F", "PR"));
+        simbolos.put("Str", new Token("Str", "S", "PR"));
         simbolos.put("var", new Token("var", "var", "PR"));
         simbolos.put("print", new Token("print", "print", "PR"));
         simbolos.put("input", new Token("input", "input", "PR"));
@@ -357,16 +363,16 @@ public class Resultados extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(47, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelSimbolos)
                     .addComponent(jLabelTokens))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPaneSimbolos)
-                    .addComponent(jScrollPaneTokens))
-                .addContainerGap())
+                    .addComponent(jScrollPaneTokens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         pack();
