@@ -72,7 +72,7 @@ public class Resultados extends javax.swing.JFrame {
 
     private void analisisSintacticoTabular() {
         Hashtable<String, Hashtable<String, String>> tabla = getTablaSintacticaTabular();
-        
+        //TODO: Hacer análisis sintáctico
     }
     
     private Hashtable<String, Hashtable<String, String>> getTablaSintacticaTabular() {
