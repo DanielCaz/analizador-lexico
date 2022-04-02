@@ -7,7 +7,7 @@ package analizadorlexico;
 public class Token {
     private final String symbol, categoria, identificador;
 
-    public Token(String symbol, String categoria, String identificador) {
+    public Token(String symbol, String identificador, String categoria) {
         this.symbol = symbol;
         this.categoria = categoria;
         this.identificador = identificador;

@@ -72,11 +72,12 @@
         <Component class="javax.swing.JTable" name="jTableSimbolos">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="3" rowCount="23">
+              <Table columnCount="3" rowCount="24">
                 <Column editable="false" title="Lexema" type="java.lang.String">
                   <Data value="Int"/>
                   <Data value="Float"/>
                   <Data value="Str"/>
+                  <Data value="var"/>
                   <Data value="print"/>
                   <Data value="input"/>
                   <Data value="compare"/>
@@ -99,18 +100,19 @@
                   <Data value="&gt;"/>
                 </Column>
                 <Column editable="false" title="Identificador" type="java.lang.String">
-                  <Data value="i"/>
-                  <Data value="f"/>
-                  <Data value="s"/>
-                  <Data value="p"/>
-                  <Data value="in"/>
-                  <Data value="c"/>
-                  <Data value="e"/>
-                  <Data value="ec"/>
-                  <Data value="l"/>
-                  <Data value="el"/>
-                  <Data value="ps"/>
-                  <Data value="pe"/>
+                  <Data value="I"/>
+                  <Data value="F"/>
+                  <Data value="S"/>
+                  <Data value="var"/>
+                  <Data value="print"/>
+                  <Data value="input"/>
+                  <Data value="compare"/>
+                  <Data value="else"/>
+                  <Data value="endCompare"/>
+                  <Data value="loop"/>
+                  <Data value="endLoop"/>
+                  <Data value="programStart"/>
+                  <Data value="programEnd"/>
                   <Data value="~"/>
                   <Data value=":"/>
                   <Data value="+"/>
@@ -124,6 +126,7 @@
                   <Data value="&gt;"/>
                 </Column>
                 <Column editable="false" title="Categor&#xed;a" type="java.lang.String">
+                  <Data value="PR"/>
                   <Data value="PR"/>
                   <Data value="PR"/>
                   <Data value="PR"/>
