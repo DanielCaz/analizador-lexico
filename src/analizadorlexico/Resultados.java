@@ -73,165 +73,213 @@ public class Resultados extends javax.swing.JFrame {
 
     private void analisisSintacticoTabular() {
         Hashtable<String, Hashtable<String, String>> tabla = getTablaSintacticaTabular();
-        //TODO: Hacer análisis sintáctico
+        /**
+         * Comparar si primero de tokens y primero de tabla son iguales =
+         * eliminar token de ambos caso contrario consultar tabla y reemplazar
+         * primero del stack con prod encontrada y en caso de que la prod sea
+         * nula = mala sintaxis
+         *
+         * pila -> filas entrada -> columnas
+         */
+
+        Stack<String> pila = new Stack<>();
+        pila.push("$");
+        pila.push("prog");
+        boolean error = false;
+
+        while (!entrada.isEmpty()) {
+            if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) {
+                entrada.removeFirst();
+                pila.pop();
+
+                continue;
+            }
+
+            Hashtable<String, String> fila = tabla.get(pila.peek());
+            if (fila != null) {
+                if (fila.containsKey(entrada.getFirst().getIdentificador())) {
+                    pila.pop();
+                    String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
+                    for (int i = produccion.length - 1; i >= 0; i--) {
+                        if (!produccion[i].isEmpty()) {
+                            pila.push(produccion[i]);
+                        }
+                    }
+
+                    continue;
+                }
+            }
+            
+            String seEsperaba = pila.peek();
+            String elError = entrada.getFirst().getIdentificador();
+
+            JOptionPane.showMessageDialog(null, "Se esperaba un \"" + seEsperaba + "\""
+                    + "\nSímbolo inválido: \"" + elError + "\"", "Error", JOptionPane.ERROR_MESSAGE);
+            error = true;
+            break;
+        }
+
+        if (!error) {
+            JOptionPane.showMessageDialog(null, "Sintaxis correcta :D", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private Hashtable<String, Hashtable<String, String>> getTablaSintacticaTabular() {
-        Hashtable<String, Hashtable<String, String>> table = new Hashtable<>();
+        Hashtable<String, Hashtable<String, String>> tabla = new Hashtable<>();
 
-        Hashtable<String, String> colProg = new Hashtable<>();
-        colProg.put("programStart", "programStart sent programEnd");
-        table.put("prog", colProg);
+        Hashtable<String, String> filaProg = new Hashtable<>();
+        filaProg.put("programStart", "programStart sent programEnd");
+        tabla.put("prog", filaProg);
 
-        Hashtable<String, String> colSent = new Hashtable<>();
-        colSent.put("V", "asign sent");
-        colSent.put("var", "decl sent");
-        colSent.put("compare", "comp sent");
-        colSent.put("loop", "cic sent");
-        colSent.put("print", "imp sent");
-        colSent.put("input", "leer sent");
-        colSent.put("endCompare", "");
-        colSent.put("endLoop", "");
-        colSent.put("programEnd", "");
-        colSent.put(":", "");
-        table.put("sent", colSent);
+        Hashtable<String, String> filaSent = new Hashtable<>();
+        filaSent.put("V", "asign sent");
+        filaSent.put("var", "decl sent");
+        filaSent.put("compare", "comp sent");
+        filaSent.put("loop", "cic sent");
+        filaSent.put("print", "imp sent");
+        filaSent.put("input", "leer sent");
+        filaSent.put("endCompare", "");
+        filaSent.put("endLoop", "");
+        filaSent.put("programEnd", "");
+        filaSent.put(":", "");
+        tabla.put("sent", filaSent);
 
-        Hashtable<String, String> colDecl = new Hashtable<>();
-        colDecl.put("var", "var V : tipos vals");
-        table.put("decl", colDecl);
+        Hashtable<String, String> filaDecl = new Hashtable<>();
+        filaDecl.put("var", "var V : tipos vals");
+        tabla.put("decl", filaDecl);
 
-        Hashtable<String, String> colVals = new Hashtable<>();
-        colVals.put("->", "-> valsAux");
-        colVals.put("V", "");
-        colVals.put("var", "");
-        colVals.put(":", "");
-        colVals.put("compare", "");
-        colVals.put("endCompare", "");
-        colVals.put("loop", "");
-        colVals.put("endLoop", "");
-        colVals.put("print", "");
-        colVals.put("input", "");
-        colVals.put("programEnd", "");
-        table.put("vals", colVals);
+        Hashtable<String, String> filaVals = new Hashtable<>();
+        filaVals.put("->", "-> valsAux");
+        filaVals.put("V", "");
+        filaVals.put("var", "");
+        filaVals.put(":", "");
+        filaVals.put("compare", "");
+        filaVals.put("endCompare", "");
+        filaVals.put("loop", "");
+        filaVals.put("endLoop", "");
+        filaVals.put("print", "");
+        filaVals.put("input", "");
+        filaVals.put("programEnd", "");
+        tabla.put("vals", filaVals);
 
-        Hashtable<String, String> colValsAux = new Hashtable<>();
-        colValsAux.put("op", "op");
-        colValsAux.put("N", "op");
-        colValsAux.put("F", "op");
-        colValsAux.put("V", "op");
-        colValsAux.put("T", "T");
-        table.put("valsAux", colValsAux);
+        Hashtable<String, String> filaValsAux = new Hashtable<>();
+        filaValsAux.put("op", "op");
+        filaValsAux.put("N", "op");
+        filaValsAux.put("F", "op");
+        filaValsAux.put("V", "op");
+        filaValsAux.put("T", "T");
+        tabla.put("valsAux", filaValsAux);
 
-        Hashtable<String, String> colAsign = new Hashtable<>();
-        colAsign.put("V", "V -> valsAux");
-        table.put("asign", colAsign);
+        Hashtable<String, String> filaAsign = new Hashtable<>();
+        filaAsign.put("V", "V -> valsAux");
+        tabla.put("asign", filaAsign);
 
-        Hashtable<String, String> colImp = new Hashtable<>();
-        colImp.put("print", "print cad");
-        table.put("imp", colImp);
+        Hashtable<String, String> filaImp = new Hashtable<>();
+        filaImp.put("print", "print cad");
+        tabla.put("imp", filaImp);
 
-        Hashtable<String, String> colCad = new Hashtable<>();
-        colCad.put("(", "op cadAux");
-        colCad.put("N", "op cadAux");
-        colCad.put("F", "op cadAux");
-        colCad.put("V", "op cadAux");
-        colCad.put("T", "T cadAux");
-        table.put("cad", colCad);
+        Hashtable<String, String> filaCad = new Hashtable<>();
+        filaCad.put("(", "op cadAux");
+        filaCad.put("N", "op cadAux");
+        filaCad.put("F", "op cadAux");
+        filaCad.put("V", "op cadAux");
+        filaCad.put("T", "T cadAux");
+        tabla.put("cad", filaCad);
 
-        Hashtable<String, String> colCadAux = new Hashtable<>();
-        colCadAux.put("~", "~ cad");
-        colCadAux.put("V", "");
-        colCadAux.put("var", "");
-        colCadAux.put(":", "");
-        colCadAux.put("compare", "");
-        colCadAux.put("endCompare", "");
-        colCadAux.put("loop", "");
-        colCadAux.put("endLoop", "");
-        colCadAux.put("print", "");
-        colCadAux.put("input", "");
-        colCadAux.put("programEnd", "");
-        table.put("cadAux", colCadAux);
+        Hashtable<String, String> filaCadAux = new Hashtable<>();
+        filaCadAux.put("~", "~ cad");
+        filaCadAux.put("V", "");
+        filaCadAux.put("var", "");
+        filaCadAux.put(":", "");
+        filaCadAux.put("compare", "");
+        filaCadAux.put("endCompare", "");
+        filaCadAux.put("loop", "");
+        filaCadAux.put("endLoop", "");
+        filaCadAux.put("print", "");
+        filaCadAux.put("input", "");
+        filaCadAux.put("programEnd", "");
+        tabla.put("cadAux", filaCadAux);
 
-        Hashtable<String, String> colOp = new Hashtable<>();
-        colOp.put("(", "(op) opAux");
-        colOp.put("N", "nums opAux");
-        colOp.put("F", "nums opAux");
-        colOp.put("V", "nums opAux");
-        table.put("op", colOp);
+        Hashtable<String, String> filaOp = new Hashtable<>();
+        filaOp.put("(", "(op) opAux");
+        filaOp.put("N", "nums opAux");
+        filaOp.put("F", "nums opAux");
+        filaOp.put("V", "nums opAux");
+        tabla.put("op", filaOp);
 
-        Hashtable<String, String> colOpAux = new Hashtable<>();
-        colOpAux.put("V", "");
-        colOpAux.put("var", "");
-        colOpAux.put(":", "");
-        colOpAux.put("compare", "");
-        colOpAux.put("endCompare", "");
-        colOpAux.put("loop", "");
-        colOpAux.put("endLoop", "");
-        colOpAux.put("print", "");
-        colOpAux.put("input", "");
-        colOpAux.put("programEnd", "");
-        colOpAux.put(")", "");
-        colOpAux.put("<", "");
-        colOpAux.put(">", "");
-        colOpAux.put("<>", "");
-        colOpAux.put("=", "");
-        colOpAux.put("~", "");
-        colOpAux.put("+", "ops op");
-        colOpAux.put("-", "ops op");
-        colOpAux.put("*", "ops op");
-        colOpAux.put("/", "ops op");
-        table.put("opAux", colOpAux);
+        Hashtable<String, String> filaOpAux = new Hashtable<>();
+        filaOpAux.put("V", "");
+        filaOpAux.put("var", "");
+        filaOpAux.put(":", "");
+        filaOpAux.put("compare", "");
+        filaOpAux.put("endCompare", "");
+        filaOpAux.put("loop", "");
+        filaOpAux.put("endLoop", "");
+        filaOpAux.put("print", "");
+        filaOpAux.put("input", "");
+        filaOpAux.put("programEnd", "");
+        filaOpAux.put(")", "");
+        filaOpAux.put("<", "");
+        filaOpAux.put(">", "");
+        filaOpAux.put("<>", "");
+        filaOpAux.put("=", "");
+        filaOpAux.put("~", "");
+        filaOpAux.put("+", "ops op");
+        filaOpAux.put("-", "ops op");
+        filaOpAux.put("*", "ops op");
+        filaOpAux.put("/", "ops op");
+        tabla.put("opAux", filaOpAux);
 
-        Hashtable<String, String> colOps = new Hashtable<>();
-        colOps.put("+", "+");
-        colOps.put("-", "-");
-        colOps.put("*", "*");
-        colOps.put("/", "/");
-        table.put("ops", colOps);
+        Hashtable<String, String> filaOps = new Hashtable<>();
+        filaOps.put("+", "+");
+        filaOps.put("-", "-");
+        filaOps.put("*", "*");
+        filaOps.put("/", "/");
+        tabla.put("ops", filaOps);
 
-        Hashtable<String, String> colNums = new Hashtable<>();
-        colNums.put("N", "N");
-        colNums.put("F", "F");
-        colNums.put("V", "V");
-        table.put("nums", colNums);
+        Hashtable<String, String> filaNums = new Hashtable<>();
+        filaNums.put("N", "N");
+        filaNums.put("F", "F");
+        filaNums.put("V", "V");
+        tabla.put("nums", filaNums);
 
-        Hashtable<String, String> colTipos = new Hashtable<>();
-        colTipos.put("I", "I");
-        colTipos.put("F", "F");
-        colTipos.put("S", "S");
-        table.put("tipos", colTipos);
+        Hashtable<String, String> filaTipos = new Hashtable<>();
+        filaTipos.put("i", "i");
+        filaTipos.put("f", "f");
+        filaTipos.put("s", "s");
+        tabla.put("tipos", filaTipos);
 
-        Hashtable<String, String> colLeer = new Hashtable<>();
-        colLeer.put("input", "input -> V");
-        table.put("leer", colLeer);
+        Hashtable<String, String> filaLeer = new Hashtable<>();
+        filaLeer.put("input", "input -> V");
+        tabla.put("leer", filaLeer);
 
-        Hashtable<String, String> colComp = new Hashtable<>();
-        colComp.put("compare", "compare op opcomps op : sent compAux endCompare");
-        table.put("comp", colComp);
+        Hashtable<String, String> filaComp = new Hashtable<>();
+        filaComp.put("compare", "compare op opcomps op : sent compAux endCompare");
+        tabla.put("comp", filaComp);
 
-        Hashtable<String, String> colCompAux = new Hashtable<>();
-        colCompAux.put(":", ": else : sent");
-        table.put("compAux", colCompAux);
+        Hashtable<String, String> filaCompAux = new Hashtable<>();
+        filaCompAux.put(":", ": else : sent");
+        tabla.put("compAux", filaCompAux);
 
-        Hashtable<String, String> colCic = new Hashtable<>();
-        colCic.put("loop", "loop op opcomps op : sent endLoop");
-        table.put("cic", colCic);
+        Hashtable<String, String> filaCic = new Hashtable<>();
+        filaCic.put("loop", "loop op opcomps op : sent endLoop");
+        tabla.put("cic", filaCic);
 
-        Hashtable<String, String> colOpcomps = new Hashtable<>();
-        colOpcomps.put("<", "<");
-        colOpcomps.put(">", ">");
-        colOpcomps.put("<>", "<>");
-        colOpcomps.put("=", "=");
-        table.put("opcomps", colOpcomps);
+        Hashtable<String, String> filaOpcomps = new Hashtable<>();
+        filaOpcomps.put("<", "<");
+        filaOpcomps.put(">", ">");
+        filaOpcomps.put("<>", "<>");
+        filaOpcomps.put("=", "=");
+        tabla.put("opcomps", filaOpcomps);
 
-        return table;
+        return tabla;
     }
 
     private Hashtable<String, Token> getSimbolos() {
         Hashtable<String, Token> simbolos = new Hashtable<>();
-        simbolos.put("Int", new Token("Int", "I", "PR"));
-        simbolos.put("Float", new Token("Float", "F", "PR"));
-        simbolos.put("Str", new Token("Str", "S", "PR"));
+        simbolos.put("Int", new Token("Int", "i", "PR"));
+        simbolos.put("Float", new Token("Float", "f", "PR"));
+        simbolos.put("Str", new Token("Str", "s", "PR"));
         simbolos.put("var", new Token("var", "var", "PR"));
         simbolos.put("print", new Token("print", "print", "PR"));
         simbolos.put("input", new Token("input", "input", "PR"));
