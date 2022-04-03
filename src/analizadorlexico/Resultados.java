@@ -2,6 +2,7 @@ package analizadorlexico;
 
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -109,12 +110,17 @@ public class Resultados extends javax.swing.JFrame {
                     continue;
                 }
             }
-            
+
             String seEsperaba = pila.peek();
             String elError = entrada.getFirst().getIdentificador();
+            LinkedList<String> primeros = getPrimeros(tabla, seEsperaba, new LinkedList<>());
+            String mensaje = "Se esperaban: ";
+            for (String p : primeros) {
+                mensaje += "\"" + p + "\", ";
+            }
+            mensaje = mensaje.substring(0, mensaje.length() - 2) + "\nSímbolo inválido: " + elError;
 
-            JOptionPane.showMessageDialog(null, "Se esperaba un \"" + seEsperaba + "\""
-                    + "\nSímbolo inválido: \"" + elError + "\"", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
             error = true;
             break;
         }
@@ -122,6 +128,41 @@ public class Resultados extends javax.swing.JFrame {
         if (!error) {
             JOptionPane.showMessageDialog(null, "Sintaxis correcta :D", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    private LinkedList<String> getPrimeros(Hashtable<String, Hashtable<String, String>> tabla, String id, LinkedList<String> agregados) {
+        LinkedList<String> primeros = new LinkedList<>();
+        try {
+            Hashtable<String, String> fila = tabla.get(id);
+
+            if (fila != null) {
+                Enumeration<String> columnas = fila.keys();
+                while (columnas.hasMoreElements()) {
+                    String col = columnas.nextElement();
+
+                    String primero = fila.get(col).split(" ")[0];
+
+                    if (tabla.containsKey(primero)) {
+                        LinkedList<String> recs = getPrimeros(tabla, primero, agregados);
+                        primeros.addAll(recs);
+                    } else {
+                        if (primero.compareTo("") != 0 && !agregados.contains(primero)) {
+                            primeros.add(primero);
+                            agregados.add(primero);
+                        }
+                    }
+
+                }
+            } else {
+                if (!agregados.contains(id)) {
+                    agregados.add(id);
+                    primeros.add(id);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return primeros;
     }
 
     private Hashtable<String, Hashtable<String, String>> getTablaSintacticaTabular() {
@@ -201,7 +242,7 @@ public class Resultados extends javax.swing.JFrame {
         tabla.put("cadAux", filaCadAux);
 
         Hashtable<String, String> filaOp = new Hashtable<>();
-        filaOp.put("(", "(op) opAux");
+        filaOp.put("(", "( op ) opAux");
         filaOp.put("N", "nums opAux");
         filaOp.put("F", "nums opAux");
         filaOp.put("V", "nums opAux");
@@ -259,6 +300,7 @@ public class Resultados extends javax.swing.JFrame {
 
         Hashtable<String, String> filaCompAux = new Hashtable<>();
         filaCompAux.put(":", ": else : sent");
+        filaCompAux.put("endCompare", "");
         tabla.put("compAux", filaCompAux);
 
         Hashtable<String, String> filaCic = new Hashtable<>();
