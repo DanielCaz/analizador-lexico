@@ -22,6 +22,7 @@ public class Resultados extends javax.swing.JFrame {
         initComponents();
         Resultados.listaTokens = listaTokens;
         entrada = new LinkedList<>();
+        boolean error = false;
 
         simbolos = getSimbolos();
         DefaultTableModel modelSimbolos = (DefaultTableModel) jTableSimbolos.getModel();
@@ -59,6 +60,8 @@ public class Resultados extends javax.swing.JFrame {
                 entrada.add(token);
             } else {
                 JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.WARNING_MESSAGE);
+                
+                error = true;
 
                 WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
                 Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
@@ -69,7 +72,7 @@ public class Resultados extends javax.swing.JFrame {
             }
         }
 
-        analisisSintacticoTabular();
+        if (!error) analisisSintacticoTabular();
     }
 
     private void analisisSintacticoTabular() {
@@ -112,7 +115,7 @@ public class Resultados extends javax.swing.JFrame {
             }
 
             String seEsperaba = pila.peek();
-            String elError = entrada.getFirst().getIdentificador();
+            String elError = entrada.getFirst().getSymbol();
             LinkedList<String> primeros = getPrimeros(tabla, seEsperaba, new LinkedList<>());
             String mensaje = "Se esperaban: ";
             for (String p : primeros) {
@@ -169,38 +172,38 @@ public class Resultados extends javax.swing.JFrame {
         Hashtable<String, Hashtable<String, String>> tabla = new Hashtable<>();
 
         Hashtable<String, String> filaProg = new Hashtable<>();
-        filaProg.put("programStart", "programStart sent programEnd");
+        filaProg.put("ps", "ps sent pe");
         tabla.put("prog", filaProg);
 
         Hashtable<String, String> filaSent = new Hashtable<>();
         filaSent.put("V", "asign sent");
-        filaSent.put("var", "decl sent");
-        filaSent.put("compare", "comp sent");
-        filaSent.put("loop", "cic sent");
-        filaSent.put("print", "imp sent");
-        filaSent.put("input", "leer sent");
-        filaSent.put("endCompare", "");
-        filaSent.put("endLoop", "");
-        filaSent.put("programEnd", "");
+        filaSent.put("v", "decl sent");
+        filaSent.put("c", "comp sent");
+        filaSent.put("l", "cic sent");
+        filaSent.put("p", "imp sent");
+        filaSent.put("in", "leer sent");
+        filaSent.put("ec", "");
+        filaSent.put("el", "");
+        filaSent.put("pe", "");
         filaSent.put(":", "");
         tabla.put("sent", filaSent);
 
         Hashtable<String, String> filaDecl = new Hashtable<>();
-        filaDecl.put("var", "var V : tipos vals");
+        filaDecl.put("v", "v V : tipos vals");
         tabla.put("decl", filaDecl);
 
         Hashtable<String, String> filaVals = new Hashtable<>();
         filaVals.put("->", "-> valsAux");
         filaVals.put("V", "");
-        filaVals.put("var", "");
+        filaVals.put("v", "");
         filaVals.put(":", "");
-        filaVals.put("compare", "");
-        filaVals.put("endCompare", "");
-        filaVals.put("loop", "");
-        filaVals.put("endLoop", "");
-        filaVals.put("print", "");
-        filaVals.put("input", "");
-        filaVals.put("programEnd", "");
+        filaVals.put("c", "");
+        filaVals.put("ec", "");
+        filaVals.put("l", "");
+        filaVals.put("el", "");
+        filaVals.put("p", "");
+        filaVals.put("in", "");
+        filaVals.put("pe", "");
         tabla.put("vals", filaVals);
 
         Hashtable<String, String> filaValsAux = new Hashtable<>();
@@ -216,7 +219,7 @@ public class Resultados extends javax.swing.JFrame {
         tabla.put("asign", filaAsign);
 
         Hashtable<String, String> filaImp = new Hashtable<>();
-        filaImp.put("print", "print cad");
+        filaImp.put("p", "p cad");
         tabla.put("imp", filaImp);
 
         Hashtable<String, String> filaCad = new Hashtable<>();
@@ -230,15 +233,15 @@ public class Resultados extends javax.swing.JFrame {
         Hashtable<String, String> filaCadAux = new Hashtable<>();
         filaCadAux.put("~", "~ cad");
         filaCadAux.put("V", "");
-        filaCadAux.put("var", "");
+        filaCadAux.put("v", "");
         filaCadAux.put(":", "");
-        filaCadAux.put("compare", "");
-        filaCadAux.put("endCompare", "");
-        filaCadAux.put("loop", "");
-        filaCadAux.put("endLoop", "");
-        filaCadAux.put("print", "");
-        filaCadAux.put("input", "");
-        filaCadAux.put("programEnd", "");
+        filaCadAux.put("c", "");
+        filaCadAux.put("ec", "");
+        filaCadAux.put("l", "");
+        filaCadAux.put("el", "");
+        filaCadAux.put("p", "");
+        filaCadAux.put("in", "");
+        filaCadAux.put("pe", "");
         tabla.put("cadAux", filaCadAux);
 
         Hashtable<String, String> filaOp = new Hashtable<>();
@@ -250,15 +253,15 @@ public class Resultados extends javax.swing.JFrame {
 
         Hashtable<String, String> filaOpAux = new Hashtable<>();
         filaOpAux.put("V", "");
-        filaOpAux.put("var", "");
+        filaOpAux.put("v", "");
         filaOpAux.put(":", "");
-        filaOpAux.put("compare", "");
-        filaOpAux.put("endCompare", "");
-        filaOpAux.put("loop", "");
-        filaOpAux.put("endLoop", "");
-        filaOpAux.put("print", "");
-        filaOpAux.put("input", "");
-        filaOpAux.put("programEnd", "");
+        filaOpAux.put("c", "");
+        filaOpAux.put("ec", "");
+        filaOpAux.put("l", "");
+        filaOpAux.put("el", "");
+        filaOpAux.put("p", "");
+        filaOpAux.put("in", "");
+        filaOpAux.put("pe", "");
         filaOpAux.put(")", "");
         filaOpAux.put("<", "");
         filaOpAux.put(">", "");
@@ -291,20 +294,20 @@ public class Resultados extends javax.swing.JFrame {
         tabla.put("tipos", filaTipos);
 
         Hashtable<String, String> filaLeer = new Hashtable<>();
-        filaLeer.put("input", "input -> V");
+        filaLeer.put("in", "in -> V");
         tabla.put("leer", filaLeer);
 
         Hashtable<String, String> filaComp = new Hashtable<>();
-        filaComp.put("compare", "compare op opcomps op : sent compAux endCompare");
+        filaComp.put("c", "c op opcomps op : sent compAux ec");
         tabla.put("comp", filaComp);
 
         Hashtable<String, String> filaCompAux = new Hashtable<>();
         filaCompAux.put(":", ": else : sent");
-        filaCompAux.put("endCompare", "");
+        filaCompAux.put("ec", "");
         tabla.put("compAux", filaCompAux);
 
         Hashtable<String, String> filaCic = new Hashtable<>();
-        filaCic.put("loop", "loop op opcomps op : sent endLoop");
+        filaCic.put("l", "l op opcomps op : sent el");
         tabla.put("cic", filaCic);
 
         Hashtable<String, String> filaOpcomps = new Hashtable<>();
@@ -322,16 +325,16 @@ public class Resultados extends javax.swing.JFrame {
         simbolos.put("Int", new Token("Int", "i", "PR"));
         simbolos.put("Float", new Token("Float", "f", "PR"));
         simbolos.put("Str", new Token("Str", "s", "PR"));
-        simbolos.put("var", new Token("var", "var", "PR"));
-        simbolos.put("print", new Token("print", "print", "PR"));
-        simbolos.put("input", new Token("input", "input", "PR"));
-        simbolos.put("compare", new Token("compare", "compare", "PR"));
-        simbolos.put("else", new Token("else", "else", "PR"));
-        simbolos.put("endCompare", new Token("endCompare", "endCompare", "PR"));
-        simbolos.put("loop", new Token("loop", "loop", "PR"));
-        simbolos.put("endLoop", new Token("endLoop", "endLoop", "PR"));
-        simbolos.put("programStart", new Token("programStart", "programStart", "PR"));
-        simbolos.put("programEnd", new Token("programEnd", "programEnd", "PR"));
+        simbolos.put("var", new Token("var", "v", "PR"));
+        simbolos.put("print", new Token("print", "p", "PR"));
+        simbolos.put("input", new Token("input", "in", "PR"));
+        simbolos.put("compare", new Token("compare", "c", "PR"));
+        simbolos.put("else", new Token("else", "e", "PR"));
+        simbolos.put("endCompare", new Token("endCompare", "ec", "PR"));
+        simbolos.put("loop", new Token("loop", "l", "PR"));
+        simbolos.put("endLoop", new Token("endLoop", "el", "PR"));
+        simbolos.put("programStart", new Token("programStart", "ps", "PR"));
+        simbolos.put("programEnd", new Token("programEnd", "pe", "PR"));
         simbolos.put("~", new Token("~", "~", "SEP"));
         simbolos.put(":", new Token(":", ":", "SEP"));
         simbolos.put("+", new Token("+", "+", "OP"));

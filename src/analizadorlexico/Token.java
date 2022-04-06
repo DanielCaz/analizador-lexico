@@ -24,6 +24,11 @@ public class Token {
     public String getIdentificador() {
         return identificador;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Símbolo: \"%s\",    ID: \"%s\",    Categoría: \"%s\"", symbol, identificador, categoria);
+    }
     
     public String[] toStringArray() {
         return new String[]{symbol, identificador, categoria};
