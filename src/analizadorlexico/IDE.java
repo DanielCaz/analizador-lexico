@@ -28,7 +28,7 @@ public class IDE extends javax.swing.JFrame {
 
             @Override
             public String getDescription() {
-                return "*.upl (UPL)";
+                return "Archivo Úpsilon (*.upl)";
             }
         });
         jFileChooserGuardar.setFileFilter(new FileFilter() {
@@ -39,7 +39,7 @@ public class IDE extends javax.swing.JFrame {
 
             @Override
             public String getDescription() {
-                return "*.upl (UPL)";
+                return "Archivo Úpsilon (*.upl)";
             }
         });
     }
