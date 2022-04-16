@@ -92,16 +92,24 @@ public class Resultados extends javax.swing.JFrame {
         boolean error = false;
 
         while (!entrada.isEmpty()) {
+            System.out.println("\n"
+                    + "Pila: " + pila
+                    + "\nEntrada: " + Helpers.entradaToString(entrada));
+            
+            System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
             if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) {
+                System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
                 entrada.removeFirst();
                 pila.pop();
 
                 continue;
             }
 
+            System.out.printf("Consultando fila \"%s\" y columna \"%s\" de la tabla sintáctica%n", pila.peek(), entrada.getFirst().getIdentificador());
             Hashtable<String, String> fila = tabla.get(pila.peek());
             if (fila != null) {
                 if (fila.containsKey(entrada.getFirst().getIdentificador())) {
+                    System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
                     pila.pop();
                     String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
                     for (int i = produccion.length - 1; i >= 0; i--) {
@@ -154,7 +162,6 @@ public class Resultados extends javax.swing.JFrame {
                             agregados.add(primero);
                         }
                     }
-
                 }
             } else {
                 if (!agregados.contains(id)) {
@@ -207,7 +214,7 @@ public class Resultados extends javax.swing.JFrame {
         tabla.put("vals", filaVals);
 
         Hashtable<String, String> filaValsAux = new Hashtable<>();
-        filaValsAux.put("op", "op");
+        filaValsAux.put("(", "op");
         filaValsAux.put("N", "op");
         filaValsAux.put("F", "op");
         filaValsAux.put("V", "op");
@@ -346,6 +353,8 @@ public class Resultados extends javax.swing.JFrame {
         simbolos.put("=", new Token("=", "=", "OP"));
         simbolos.put("<", new Token("<", "<", "OP"));
         simbolos.put(">", new Token(">", ">", "OP"));
+        simbolos.put("(", new Token("(", "(", "OP"));
+        simbolos.put(")", new Token(")", ")", "OP"));
         return simbolos;
     }
 

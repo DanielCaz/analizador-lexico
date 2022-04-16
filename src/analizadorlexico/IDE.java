@@ -143,7 +143,7 @@ public class IDE extends javax.swing.JFrame {
         LinkedList<String> listaTokens = new LinkedList<>();
         while (lineas.hasMoreTokens()) {
             String linea = lineas.nextToken();
-            StringTokenizer tokens = new StringTokenizer(linea, "=+*/~:", true);
+            StringTokenizer tokens = new StringTokenizer(linea, "=+*/~:()", true);
             while (tokens.hasMoreTokens()) {
                 String token = tokens.nextToken();
                 StringTokenizer masTokens = new StringTokenizer(token);
