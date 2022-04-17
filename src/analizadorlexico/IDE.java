@@ -196,6 +196,7 @@ public class IDE extends javax.swing.JFrame {
         }
         Resultados resultados = new Resultados(listaTokens);
         resultados.setLocationRelativeTo(null);
+        resultados.pack();
         resultados.setVisible(true);
     }//GEN-LAST:event_jMenuItemArchivoEjecutarActionPerformed
 

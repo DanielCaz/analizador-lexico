@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.Stack;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 public class Resultados extends javax.swing.JFrame {
 
@@ -60,7 +62,7 @@ public class Resultados extends javax.swing.JFrame {
                 entrada.add(token);
             } else {
                 JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.WARNING_MESSAGE);
-                
+
                 error = true;
 
                 WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
@@ -72,7 +74,9 @@ public class Resultados extends javax.swing.JFrame {
             }
         }
 
-        if (!error) analisisSintacticoTabular();
+        if (!error) {
+            analisisSintacticoTabular();
+        }
     }
 
     private void analisisSintacticoTabular() {
@@ -90,12 +94,14 @@ public class Resultados extends javax.swing.JFrame {
         pila.push("$");
         pila.push("prog");
         boolean error = false;
+        DefaultTreeModel modelArbol = (DefaultTreeModel) jTreeArbol.getModel();
+        DefaultMutableTreeNode nodosTokens = new DefaultMutableTreeNode("prog");
 
         while (!entrada.isEmpty()) {
             System.out.println("\n"
                     + "Pila: " + pila
                     + "\nEntrada: " + Helpers.entradaToString(entrada));
-            
+
             System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
             if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) {
                 System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
@@ -110,8 +116,22 @@ public class Resultados extends javax.swing.JFrame {
             if (fila != null) {
                 if (fila.containsKey(entrada.getFirst().getIdentificador())) {
                     System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
+                    String copia = pila.peek();
                     pila.pop();
                     String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
+
+                    Enumeration hijos = nodosTokens.depthFirstEnumeration();
+                    while (hijos.hasMoreElements()) {
+                        DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) hijos.nextElement();
+                        System.out.println("Nodo: " + nodo.toString());
+                        if (nodo.toString().compareTo(copia) == 0) {
+                            for (String prod : produccion) {
+                                nodo.add(new DefaultMutableTreeNode(prod));
+                            }
+                            break;
+                        }
+                    }
+
                     for (int i = produccion.length - 1; i >= 0; i--) {
                         if (!produccion[i].isEmpty()) {
                             pila.push(produccion[i]);
@@ -138,6 +158,8 @@ public class Resultados extends javax.swing.JFrame {
 
         if (!error) {
             JOptionPane.showMessageDialog(null, "Sintaxis correcta :D", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            modelArbol.setRoot(nodosTokens);
+            jTreeArbol.setModel(modelArbol);
         }
     }
 
@@ -373,6 +395,9 @@ public class Resultados extends javax.swing.JFrame {
         jLabelTokens = new javax.swing.JLabel();
         jScrollPaneTokens = new javax.swing.JScrollPane();
         jTableTokens = new javax.swing.JTable();
+        jScrollPaneArbol = new javax.swing.JScrollPane();
+        jTreeArbol = new javax.swing.JTree();
+        jLabelArbol = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -448,6 +473,12 @@ public class Resultados extends javax.swing.JFrame {
         jTableTokens.setMinimumSize(new java.awt.Dimension(0, 200));
         jScrollPaneTokens.setViewportView(jTableTokens);
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        jTreeArbol.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPaneArbol.setViewportView(jTreeArbol);
+
+        jLabelArbol.setText("Árbol");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -457,11 +488,15 @@ public class Resultados extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPaneSimbolos, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelSimbolos))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPaneTokens, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelTokens))
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelArbol)
+                    .addComponent(jScrollPaneArbol, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -469,11 +504,14 @@ public class Resultados extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelSimbolos)
-                    .addComponent(jLabelTokens))
+                    .addComponent(jLabelTokens)
+                    .addComponent(jLabelArbol))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPaneSimbolos)
-                    .addComponent(jScrollPaneTokens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPaneSimbolos)
+                        .addComponent(jScrollPaneTokens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPaneArbol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(47, Short.MAX_VALUE))
         );
 
@@ -516,11 +554,14 @@ public class Resultados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabelArbol;
     private javax.swing.JLabel jLabelSimbolos;
     private javax.swing.JLabel jLabelTokens;
+    private javax.swing.JScrollPane jScrollPaneArbol;
     private javax.swing.JScrollPane jScrollPaneSimbolos;
     private javax.swing.JScrollPane jScrollPaneTokens;
     private javax.swing.JTable jTableSimbolos;
     private javax.swing.JTable jTableTokens;
+    private javax.swing.JTree jTreeArbol;
     // End of variables declaration//GEN-END:variables
 }
