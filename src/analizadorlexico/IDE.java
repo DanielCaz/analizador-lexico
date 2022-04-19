@@ -165,7 +165,6 @@ public class IDE extends javax.swing.JFrame {
                         String tokenizerSiguiente = "";
                         while (tokenizerSiguiente.compareTo("<") != 0 && tokenizer.hasMoreTokens()) {
                             tokenizerSiguiente = tokenizer.nextToken();
-                            listaTokens.add(tokenizerSiguiente);
                         }
                         listaTokens.add(tokenizerSiguiente + ">");
                         tokenizer.nextToken();
