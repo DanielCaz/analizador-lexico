@@ -123,10 +123,13 @@ public class Resultados extends javax.swing.JFrame {
                     Enumeration hijos = nodosTokens.depthFirstEnumeration();
                     while (hijos.hasMoreElements()) {
                         DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) hijos.nextElement();
-                        System.out.println("Nodo: " + nodo.toString());
-                        if (nodo.toString().compareTo(copia) == 0) {
+                        if (nodo.toString().compareTo(copia) == 0 && nodo.isLeaf()) {
                             for (String prod : produccion) {
-                                nodo.add(new DefaultMutableTreeNode(prod));
+                                if (prod.length() > 0) {
+                                    nodo.add(new DefaultMutableTreeNode(prod));
+                                } else {
+                                    nodo.add(new DefaultMutableTreeNode("ε"));
+                                }
                             }
                             break;
                         }
