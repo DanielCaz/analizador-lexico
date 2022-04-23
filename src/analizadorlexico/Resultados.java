@@ -334,7 +334,7 @@ public class Resultados extends javax.swing.JFrame {
         tabla.put("comp", filaComp);
 
         Hashtable<String, String> filaCompAux = new Hashtable<>();
-        filaCompAux.put(":", ": else : sent");
+        filaCompAux.put(":", ": e : sent");
         filaCompAux.put("ec", "");
         tabla.put("compAux", filaCompAux);
 
