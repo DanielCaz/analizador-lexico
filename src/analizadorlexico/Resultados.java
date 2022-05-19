@@ -52,7 +52,15 @@ public class Resultados extends javax.swing.JFrame {
                     modelSimbolos.addRow(token.toStringArray());
                 }
                 entrada.add(token);
-            } else if (fila.matches("^(\\d+|(\\d+\\.\\d+))$")) {
+            } else if (fila.matches("^(\\d+\\.\\d+)$")) {
+                Token token = new Token(fila, "F", "NUM");
+                model.addRow(token.toStringArray());
+                if (!simbolos.containsKey(fila)) {
+                    simbolos.put(fila, token);
+                    modelSimbolos.addRow(token.toStringArray());
+                }
+                entrada.add(token);
+            } else if (fila.matches("^(\\d+)$")) {
                 Token token = new Token(fila, "N", "NUM");
                 model.addRow(token.toStringArray());
                 if (!simbolos.containsKey(fila)) {
@@ -82,7 +90,7 @@ public class Resultados extends javax.swing.JFrame {
     private void analisisSintacticoTabular() {
         Hashtable<String, Hashtable<String, String>> tabla = getTablaSintacticaTabular();
         /**
-         * Comparar si primero de tokens y primero de tabla son iguales =
+         * Comparar si primero de tokens y primero de entrada son iguales =
          * eliminar token de ambos caso contrario consultar tabla y reemplazar
          * primero del stack con prod encontrada y en caso de que la prod sea
          * nula = mala sintaxis
@@ -103,7 +111,7 @@ public class Resultados extends javax.swing.JFrame {
                     + "\nEntrada: " + Helpers.entradaToString(entrada));
 
             System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
-            if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) {
+            if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) { //El primero de la entrada y lo más arriba de la pila son iguales
                 System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
                 entrada.removeFirst();
                 pila.pop();
@@ -112,20 +120,20 @@ public class Resultados extends javax.swing.JFrame {
             }
 
             System.out.printf("Consultando fila \"%s\" y columna \"%s\" de la tabla sintáctica%n", pila.peek(), entrada.getFirst().getIdentificador());
-            Hashtable<String, String> fila = tabla.get(pila.peek());
+            Hashtable<String, String> fila = tabla.get(pila.peek()); //Consultando fila de la tabla
             if (fila != null) {
-                if (fila.containsKey(entrada.getFirst().getIdentificador())) {
+                if (fila.containsKey(entrada.getFirst().getIdentificador())) { //Se encontró la fila y columna en la tabla
                     System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
                     String copia = pila.peek();
                     pila.pop();
                     String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
 
-                    Enumeration hijos = nodosTokens.depthFirstEnumeration();
+                    Enumeration hijos = nodosTokens.depthFirstEnumeration(); //Buscamos el nodo al que le queremos agregar los hijos
                     while (hijos.hasMoreElements()) {
                         DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) hijos.nextElement();
-                        if (nodo.toString().compareTo(copia) == 0 && nodo.isLeaf()) {
+                        if (nodo.toString().compareTo(copia) == 0 && nodo.isLeaf()) { //Revisamos que el nodo que buscamos sea el actual y que no tenga ya hijos
                             for (String prod : produccion) {
-                                if (prod.length() > 0) {
+                                if (prod.length() > 0) { //Revisamos si se agrega cadena vacía o la producción
                                     nodo.add(new DefaultMutableTreeNode(prod));
                                 } else {
                                     nodo.add(new DefaultMutableTreeNode("ε"));
