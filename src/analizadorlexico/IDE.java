@@ -34,7 +34,7 @@ public class IDE extends javax.swing.JFrame {
         jFileChooserGuardar.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.getName().endsWith(".upl");
+                return f.isDirectory() || f.getName().endsWith(".upl");
             }
 
             @Override

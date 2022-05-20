@@ -69,7 +69,7 @@ public class Resultados extends javax.swing.JFrame {
                 }
                 entrada.add(token);
             } else {
-                JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error de análisis: Símbolo \"" + fila + "\" no reconocido", "Error de análisis", JOptionPane.ERROR_MESSAGE);
 
                 error = true;
 
@@ -103,27 +103,28 @@ public class Resultados extends javax.swing.JFrame {
         pila.push("prog");
         boolean error = false;
         DefaultTreeModel modelArbol = (DefaultTreeModel) jTreeArbol.getModel();
-        DefaultMutableTreeNode nodosTokens = new DefaultMutableTreeNode("prog");
+        DefaultMutableTreeNode nodosTokens = new DefaultMutableTreeNode(new Token("prog", "prog", null));
 
         while (!entrada.isEmpty()) {
-            System.out.println("\n"
+            /*System.out.println("\n"
                     + "Pila: " + pila
-                    + "\nEntrada: " + Helpers.entradaToString(entrada));
+                    + "\nEntrada: " + Helpers.entradaToString(entrada));*/
 
-            System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
+            //System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
             if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) { //El primero de la entrada y lo más arriba de la pila son iguales
-                System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
+                //System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
                 entrada.removeFirst();
                 pila.pop();
 
                 continue;
             }
 
-            System.out.printf("Consultando fila \"%s\" y columna \"%s\" de la tabla sintáctica%n", pila.peek(), entrada.getFirst().getIdentificador());
-            Hashtable<String, String> fila = tabla.get(pila.peek()); //Consultando fila de la tabla
+            //System.out.printf("Consultando fila \"%s\" y columna \"%s\" de la tabla sintáctica%n", pila.peek(), entrada.getFirst().getIdentificador());
+            String nombreFila = pila.peek();
+            Hashtable<String, String> fila = tabla.get(nombreFila); //Consultando fila de la tabla
             if (fila != null) {
                 if (fila.containsKey(entrada.getFirst().getIdentificador())) { //Se encontró la fila y columna en la tabla
-                    System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
+                    //System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
                     String copia = pila.peek();
                     pila.pop();
                     String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
@@ -131,12 +132,48 @@ public class Resultados extends javax.swing.JFrame {
                     Enumeration hijos = nodosTokens.depthFirstEnumeration(); //Buscamos el nodo al que le queremos agregar los hijos
                     while (hijos.hasMoreElements()) {
                         DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) hijos.nextElement();
-                        if (nodo.toString().compareTo(copia) == 0 && nodo.isLeaf()) { //Revisamos que el nodo que buscamos sea el actual y que no tenga ya hijos
+                        Token datos = (Token) nodo.getUserObject();
+                        if (datos.getIdentificador().compareTo(copia) == 0 && nodo.isLeaf()) { //Revisamos que el nodo que buscamos sea el actual y que no tenga ya hijos
                             for (String prod : produccion) {
                                 if (prod.length() > 0) { //Revisamos si se agrega cadena vacía o la producción
-                                    nodo.add(new DefaultMutableTreeNode(prod));
+                                    if (nombreFila.compareTo("asign") == 0) {
+                                        if (prod.compareTo("V") == 0) {
+                                            nodo.add(new DefaultMutableTreeNode(entrada.getFirst()));
+                                        } else {
+                                            Token aAgregar = getSimbolos2().get(prod);
+                                            if (aAgregar == null) {
+                                                nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                            } else {
+                                                nodo.add(new DefaultMutableTreeNode(aAgregar));
+                                            }
+                                        }
+                                    } else if (nombreFila.compareTo("decl") == 0) {
+                                        if (prod.compareTo("V") == 0) {
+                                            nodo.add(new DefaultMutableTreeNode(entrada.get(1)));
+                                        } else {
+                                            Token aAgregar = getSimbolos2().get(prod);
+                                            if (aAgregar == null) {
+                                                nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                            } else {
+                                                nodo.add(new DefaultMutableTreeNode(aAgregar));
+                                            }
+                                        }
+                                    } else if (nombreFila.compareTo("nums") == 0) {
+                                        if (prod.compareTo("V") == 0) {
+                                            nodo.add(new DefaultMutableTreeNode(entrada.getFirst()));
+                                        } else {
+                                            nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                        }
+                                    } else {
+                                        Token aAgregar = getSimbolos2().get(prod);
+                                        if (aAgregar == null) {
+                                            nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                        } else {
+                                            nodo.add(new DefaultMutableTreeNode(aAgregar));
+                                        }
+                                    }
                                 } else {
-                                    nodo.add(new DefaultMutableTreeNode("ε"));
+                                    nodo.add(new DefaultMutableTreeNode(new Token("ε", "ε", null)));
                                 }
                             }
                             break;
@@ -154,7 +191,7 @@ public class Resultados extends javax.swing.JFrame {
             }
 
             String seEsperaba = pila.peek();
-            String elError = entrada.getFirst().getSymbol();
+            String elError = entrada.getFirst().getLexema();
             LinkedList<String> primeros = getPrimeros(tabla, seEsperaba, new LinkedList<>());
             String mensaje = "Se esperaban: ";
             for (String p : primeros) {
@@ -171,7 +208,47 @@ public class Resultados extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Sintaxis correcta :D", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             modelArbol.setRoot(nodosTokens);
             jTreeArbol.setModel(modelArbol);
+            analisisSemantico();
         }
+    }
+
+    private void analisisSemantico() {
+        // Para indicar que una variable ha sido declarada
+        DefaultTreeModel modelArbol = (DefaultTreeModel) jTreeArbol.getModel();
+        DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) modelArbol.getRoot();
+        Enumeration nodos = raiz.depthFirstEnumeration();
+        while (nodos.hasMoreElements()) {
+            DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) nodos.nextElement();
+            Token objeto = (Token) nodo.getUserObject();
+            if (objeto.getLexema().compareTo("decl") == 0) {
+                DefaultMutableTreeNode variable = nodo.getNextNode().getNextNode();
+                Token datosVariable = (Token) variable.getUserObject();
+                datosVariable.setDeclarada(true);
+                DefaultMutableTreeNode hermano = nodo.getNextSibling();
+                if (hermano != null) {
+                    Enumeration nodoHermano = hermano.depthFirstEnumeration();
+                    while (nodoHermano.hasMoreElements()) {
+                        DefaultMutableTreeNode hijoHermano = (DefaultMutableTreeNode) nodoHermano.nextElement();
+                        Token datoHijoHermano = (Token) hijoHermano.getUserObject();
+                        if (datoHijoHermano.getLexema().compareTo(datosVariable.getLexema()) == 0) {
+                            datoHijoHermano.setDeclarada(true);
+                        }
+                    }
+                }
+                
+                //TODO: revisr compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en las declaraciones
+            } else if (objeto.getLexema().compareTo("asign") == 0) {
+                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en las asignaciones
+            } else if (objeto.getLexema().compareTo("comp") == 0) {
+                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en la comparación del compare
+            } else if (objeto.getLexema().compareTo("cic") == 0) {
+                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en la comparación del loop
+            } else if (objeto.getLexema().compareTo("imp") == 0) {
+                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en lo que se está imprimiendo
+            }
+        }
+
+        JOptionPane.showMessageDialog(null, "Semántica correcta >w<", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private LinkedList<String> getPrimeros(Hashtable<String, Hashtable<String, String>> tabla, String id, LinkedList<String> agregados) {
@@ -391,6 +468,37 @@ public class Resultados extends javax.swing.JFrame {
         return simbolos;
     }
 
+    public Hashtable<String, Token> getSimbolos2() {
+        Hashtable<String, Token> simbolos = new Hashtable<>();
+        simbolos.put("i", new Token("Int", "i", "PR"));
+        simbolos.put("f", new Token("Float", "f", "PR"));
+        simbolos.put("s", new Token("Str", "s", "PR"));
+        simbolos.put("v", new Token("var", "v", "PR"));
+        simbolos.put("p", new Token("print", "p", "PR"));
+        simbolos.put("in", new Token("input", "in", "PR"));
+        simbolos.put("c", new Token("compare", "c", "PR"));
+        simbolos.put("e", new Token("else", "e", "PR"));
+        simbolos.put("ec", new Token("endCompare", "ec", "PR"));
+        simbolos.put("l", new Token("loop", "l", "PR"));
+        simbolos.put("el", new Token("endLoop", "el", "PR"));
+        simbolos.put("ps", new Token("programStart", "ps", "PR"));
+        simbolos.put("pe", new Token("programEnd", "pe", "PR"));
+        simbolos.put("~", new Token("~", "~", "SEP"));
+        simbolos.put(":", new Token(":", ":", "SEP"));
+        simbolos.put("+", new Token("+", "+", "OP"));
+        simbolos.put("-", new Token("-", "-", "OP"));
+        simbolos.put("*", new Token("*", "*", "OP"));
+        simbolos.put("/", new Token("/", "*", "OP"));
+        simbolos.put("->", new Token("->", "->", "OP"));
+        simbolos.put("<>", new Token("<>", "<>", "OP"));
+        simbolos.put("=", new Token("=", "=", "OP"));
+        simbolos.put("<", new Token("<", "<", "OP"));
+        simbolos.put(">", new Token(">", ">", "OP"));
+        simbolos.put("(", new Token("(", "(", "OP"));
+        simbolos.put(")", new Token(")", ")", "OP"));
+        return simbolos;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -505,9 +613,11 @@ public class Resultados extends javax.swing.JFrame {
                     .addComponent(jLabelTokens))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelArbol)
-                    .addComponent(jScrollPaneArbol, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelArbol)
+                        .addGap(0, 158, Short.MAX_VALUE))
+                    .addComponent(jScrollPaneArbol))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -518,12 +628,11 @@ public class Resultados extends javax.swing.JFrame {
                     .addComponent(jLabelTokens)
                     .addComponent(jLabelArbol))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPaneSimbolos)
-                        .addComponent(jScrollPaneTokens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPaneSimbolos, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneTokens)
                     .addComponent(jScrollPaneArbol))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
