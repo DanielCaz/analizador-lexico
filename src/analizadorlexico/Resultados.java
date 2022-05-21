@@ -164,6 +164,12 @@ public class Resultados extends javax.swing.JFrame {
                                         } else {
                                             nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
                                         }
+                                    } else if (nombreFila.compareTo("leer") == 0) {
+                                        if (prod.compareTo("V") == 0) {
+                                            nodo.add(new DefaultMutableTreeNode(entrada.get(2)));
+                                        } else {
+                                            nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                        }
                                     } else {
                                         Token aAgregar = getSimbolos2().get(prod);
                                         if (aAgregar == null) {
@@ -235,20 +241,52 @@ public class Resultados extends javax.swing.JFrame {
                         }
                     }
                 }
-                
-                //TODO: revisr compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en las declaraciones
+
+                if (!checarDeclaradas(variable.getNextNode())) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("asign") == 0) {
-                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en las asignaciones
+                if (!checarDeclaradas(nodo)) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("comp") == 0) {
-                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en la comparación del compare
+                if (!checarDeclaradas(nodo)) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("cic") == 0) {
-                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en la comparación del loop
+                if (!checarDeclaradas(nodo)) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("imp") == 0) {
-                //TODO: revisar compatibilidad de tipos y que solo se estén utilizando variables ya declaradas en lo que se está imprimiendo
+                if (!checarDeclaradas(nodo)) {
+                    return;
+                }
+            } else if (objeto.getLexema().compareTo("leer") == 0) {
+                if (!checarDeclaradas(nodo)) {
+                    return;
+                }
             }
         }
 
         JOptionPane.showMessageDialog(null, "Semántica correcta >w<", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private boolean checarDeclaradas(DefaultMutableTreeNode nodo) {
+        Enumeration nodos = nodo.depthFirstEnumeration();
+        while (nodos.hasMoreElements()) {
+            try {
+                DefaultMutableTreeNode actual = (DefaultMutableTreeNode) nodos.nextElement();
+                Token datos = (Token) actual.getUserObject();
+                if (datos.getIdentificador().compareTo("V") == 0 && !datos.isDeclarada()) {
+                    JOptionPane.showMessageDialog(null, "Variable \"" + datos.getLexema() + "\" no ha sido declarada", "Error semántico", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                System.out.println("Error " + accessibleContext);
+            }
+        }
+        return true;
     }
 
     private LinkedList<String> getPrimeros(Hashtable<String, Hashtable<String, String>> tabla, String id, LinkedList<String> agregados) {

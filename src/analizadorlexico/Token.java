@@ -51,11 +51,21 @@ public class Token {
 
     @Override
     public String toString() {
-        if (tipoDato != null) {
-            return identificador + " [" + tipoDato + "]";
+        String str = lexema;
+        
+        if (identificador.compareTo("V") == 0) {
+            if (declarada) {
+                str += " [D]";
+            } else {
+                str += " [ND]";
+            }
         }
-
-        return identificador;
+        
+        if (tipoDato != null) {
+            str += " [" + tipoDato + "]";
+        }
+        
+        return str;
     }
 
     public String[] toStringArray() {
