@@ -16,6 +16,8 @@ public class Resultados extends javax.swing.JFrame {
     private static LinkedList<String> listaTokens;
     private final LinkedList<Token> entrada;
     private final Hashtable<String, Token> simbolos;
+    private final DefaultTableModel modelSimbolos;
+    private final Hashtable<String, Integer> filasSimbolos;
 
     /**
      * Creates new form Resultados
@@ -27,7 +29,8 @@ public class Resultados extends javax.swing.JFrame {
         boolean error = false;
 
         simbolos = getSimbolos();
-        DefaultTableModel modelSimbolos = (DefaultTableModel) jTableSimbolos.getModel();
+        modelSimbolos = (DefaultTableModel) jTableSimbolos.getModel();
+        filasSimbolos = new Hashtable<>();
 
         DefaultTableModel model = (DefaultTableModel) jTableTokens.getModel();
         String[] filas = (String[]) listaTokens.toArray(new String[listaTokens.size()]);
@@ -42,11 +45,13 @@ public class Resultados extends javax.swing.JFrame {
                 if (!simbolos.containsKey(fila)) {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
+                    filasSimbolos.put(token.getLexema(), modelSimbolos.getRowCount() - 1);
                 }
                 entrada.add(token);
             } else if (fila.matches("^('.*')$")) {
                 Token token = new Token(fila, "T", "TEX");
                 model.addRow(token.toStringArray());
+                token.setTipoDato("Str");
                 if (!simbolos.containsKey(fila)) {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
@@ -55,6 +60,7 @@ public class Resultados extends javax.swing.JFrame {
             } else if (fila.matches("^(\\d+\\.\\d+)$")) {
                 Token token = new Token(fila, "F", "NUM");
                 model.addRow(token.toStringArray());
+                token.setTipoDato("Float");
                 if (!simbolos.containsKey(fila)) {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
@@ -63,6 +69,7 @@ public class Resultados extends javax.swing.JFrame {
             } else if (fila.matches("^(\\d+)$")) {
                 Token token = new Token(fila, "N", "NUM");
                 model.addRow(token.toStringArray());
+                token.setTipoDato("Int");
                 if (!simbolos.containsKey(fila)) {
                     simbolos.put(fila, token);
                     modelSimbolos.addRow(token.toStringArray());
@@ -89,14 +96,6 @@ public class Resultados extends javax.swing.JFrame {
 
     private void analisisSintacticoTabular() {
         Hashtable<String, Hashtable<String, String>> tabla = getTablaSintacticaTabular();
-        /**
-         * Comparar si primero de tokens y primero de entrada son iguales =
-         * eliminar token de ambos caso contrario consultar tabla y reemplazar
-         * primero del stack con prod encontrada y en caso de que la prod sea
-         * nula = mala sintaxis
-         *
-         * pila -> filas entrada -> columnas
-         */
 
         Stack<String> pila = new Stack<>();
         pila.push("$");
@@ -106,25 +105,17 @@ public class Resultados extends javax.swing.JFrame {
         DefaultMutableTreeNode nodosTokens = new DefaultMutableTreeNode(new Token("prog", "prog", null));
 
         while (!entrada.isEmpty()) {
-            /*System.out.println("\n"
-                    + "Pila: " + pila
-                    + "\nEntrada: " + Helpers.entradaToString(entrada));*/
-
-            //System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
             if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) { //El primero de la entrada y lo más arriba de la pila son iguales
-                //System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
                 entrada.removeFirst();
                 pila.pop();
 
                 continue;
             }
 
-            //System.out.printf("Consultando fila \"%s\" y columna \"%s\" de la tabla sintáctica%n", pila.peek(), entrada.getFirst().getIdentificador());
             String nombreFila = pila.peek();
             Hashtable<String, String> fila = tabla.get(nombreFila); //Consultando fila de la tabla
             if (fila != null) {
                 if (fila.containsKey(entrada.getFirst().getIdentificador())) { //Se encontró la fila y columna en la tabla
-                    //System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
                     String copia = pila.peek();
                     pila.pop();
                     String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
@@ -149,7 +140,8 @@ public class Resultados extends javax.swing.JFrame {
                                         }
                                     } else if (nombreFila.compareTo("decl") == 0) {
                                         if (prod.compareTo("V") == 0) {
-                                            nodo.add(new DefaultMutableTreeNode(entrada.get(1)));
+                                            Token aAgregar = entrada.get(1);
+                                            nodo.add(new DefaultMutableTreeNode(aAgregar));
                                         } else {
                                             Token aAgregar = getSimbolos2().get(prod);
                                             if (aAgregar == null) {
@@ -162,11 +154,29 @@ public class Resultados extends javax.swing.JFrame {
                                         if (prod.compareTo("V") == 0) {
                                             nodo.add(new DefaultMutableTreeNode(entrada.getFirst()));
                                         } else {
-                                            nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                            if (prod.compareTo("N") == 0) {
+                                                Token aAgregar = new Token(prod, prod, null);
+                                                aAgregar.setTipoDato("Int");
+                                                nodo.add(new DefaultMutableTreeNode(aAgregar));
+                                            } else if (prod.compareTo("F") == 0) {
+                                                Token aAgregar = new Token(prod, prod, null);
+                                                aAgregar.setTipoDato("Float");
+                                                nodo.add(new DefaultMutableTreeNode(aAgregar));
+                                            } else {
+                                                nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                            }
                                         }
                                     } else if (nombreFila.compareTo("leer") == 0) {
                                         if (prod.compareTo("V") == 0) {
                                             nodo.add(new DefaultMutableTreeNode(entrada.get(2)));
+                                        } else {
+                                            nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
+                                        }
+                                    } else if (nombreFila.compareTo("cad") == 0 || nombreFila.compareTo("valsAux") == 0) {
+                                        if (prod.compareTo("T") == 0) {
+                                            Token aAgregar = new Token(prod, prod, null);
+                                            aAgregar.setTipoDato("Str");
+                                            nodo.add(new DefaultMutableTreeNode(aAgregar));
                                         } else {
                                             nodo.add(new DefaultMutableTreeNode(new Token(prod, prod, null)));
                                         }
@@ -245,20 +255,45 @@ public class Resultados extends javax.swing.JFrame {
                 if (!checarDeclaradas(variable.getNextNode())) {
                     return;
                 }
+
+                DefaultMutableTreeNode tipo = variable.getNextNode().getNextNode().getNextNode();
+                String tipoBuscar = ((Token) tipo.getUserObject()).getLexema();
+                datosVariable.setTipoDato(tipoBuscar);
+                String nombreVar = ((Token) variable.getUserObject()).getLexema();
+                modelSimbolos.setValueAt(tipoBuscar, filasSimbolos.get(nombreVar), 3);
+                if (!checarOp(variable.getNextSibling().getNextSibling().getNextSibling(), tipoBuscar)) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("asign") == 0) {
                 if (!checarDeclaradas(nodo)) {
+                    return;
+                }
+
+                if (!checarOp(nodo, ((Token) nodo.getNextNode().getUserObject()).getTipoDato())) {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("comp") == 0) {
                 if (!checarDeclaradas(nodo)) {
                     return;
                 }
+                
+                if (!checarTipos(nodo)) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("cic") == 0) {
                 if (!checarDeclaradas(nodo)) {
                     return;
                 }
+                
+                if (!checarTipos(nodo)) {
+                    return;
+                }
             } else if (objeto.getLexema().compareTo("imp") == 0) {
                 if (!checarDeclaradas(nodo)) {
+                    return;
+                }
+                
+                if (!checarTipos(nodo)) {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("leer") == 0) {
@@ -271,19 +306,45 @@ public class Resultados extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Semántica correcta >w<", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    private boolean checarOp(DefaultMutableTreeNode raiz, String tipoDatoComprobar) {
+        Enumeration<DefaultMutableTreeNode> tokens = raiz.depthFirstEnumeration();
+        while (tokens.hasMoreElements()) {
+            Token actual = (Token) tokens.nextElement().getUserObject();
+            if (actual.getTipoDato() != null && actual.getTipoDato().compareTo(tipoDatoComprobar) != 0) {
+                JOptionPane.showMessageDialog(null, "Tipos de dato incompatibles", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checarTipos(DefaultMutableTreeNode raiz) {
+        String tipoAComprobar = null;
+        Enumeration<DefaultMutableTreeNode> tokens = raiz.depthFirstEnumeration();
+        while (tokens.hasMoreElements()) {
+            Token actual = (Token) tokens.nextElement().getUserObject();
+            if (actual.getTipoDato() != null) {
+                if (tipoAComprobar == null) {
+                    tipoAComprobar = actual.getTipoDato();
+                } else {
+                    if (actual.getTipoDato().compareTo(tipoAComprobar) != 0) {
+                        JOptionPane.showMessageDialog(null, "Tipos de dato incompatibles", "Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     private boolean checarDeclaradas(DefaultMutableTreeNode nodo) {
         Enumeration nodos = nodo.depthFirstEnumeration();
         while (nodos.hasMoreElements()) {
-            try {
-                DefaultMutableTreeNode actual = (DefaultMutableTreeNode) nodos.nextElement();
-                Token datos = (Token) actual.getUserObject();
-                if (datos.getIdentificador().compareTo("V") == 0 && !datos.isDeclarada()) {
-                    JOptionPane.showMessageDialog(null, "Variable \"" + datos.getLexema() + "\" no ha sido declarada", "Error semántico", JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-            } catch (Exception e) {
-                System.out.println(e);
-                System.out.println("Error " + accessibleContext);
+            DefaultMutableTreeNode actual = (DefaultMutableTreeNode) nodos.nextElement();
+            Token datos = (Token) actual.getUserObject();
+            if (datos.getIdentificador().compareTo("V") == 0 && !datos.isDeclarada()) {
+                JOptionPane.showMessageDialog(null, "Variable \"" + datos.getLexema() + "\" no ha sido declarada", "Error semántico", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
         }
         return true;
@@ -562,40 +623,40 @@ public class Resultados extends javax.swing.JFrame {
 
         jTableSimbolos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Int", "I", "PR"},
-                {"Float", "F", "PR"},
-                {"Str", "S", "PR"},
-                {"var", "var", "PR"},
-                {"print", "print", "PR"},
-                {"input", "input", "PR"},
-                {"compare", "compare", "PR"},
-                {"else", "else", "PR"},
-                {"endCompare", "endCompare", "PR"},
-                {"loop", "loop", "PR"},
-                {"endLoop", "endLoop", "PR"},
-                {"programStart", "programStart", "PR"},
-                {"programEnd", "programEnd", "PR"},
-                {"~", "~", "SEP"},
-                {":", ":", "SEP"},
-                {"+", "+", "OP"},
-                {"-", "-", "OP"},
-                {"*", "*", "OP"},
-                {"/", "/", "OP"},
-                {"->", "->", "OP"},
-                {"<>", "<>", "OP"},
-                {"=", "=", "OP"},
-                {"<", "<", "OP"},
-                {">", ">", "OP"}
+                {"Int", "I", "PR", null},
+                {"Float", "F", "PR", null},
+                {"Str", "S", "PR", null},
+                {"var", "var", "PR", null},
+                {"print", "print", "PR", null},
+                {"input", "input", "PR", null},
+                {"compare", "compare", "PR", null},
+                {"else", "else", "PR", null},
+                {"endCompare", "endCompare", "PR", null},
+                {"loop", "loop", "PR", null},
+                {"endLoop", "endLoop", "PR", null},
+                {"programStart", "programStart", "PR", null},
+                {"programEnd", "programEnd", "PR", null},
+                {"~", "~", "SEP", null},
+                {":", ":", "SEP", null},
+                {"+", "+", "OP", null},
+                {"-", "-", "OP", null},
+                {"*", "*", "OP", null},
+                {"/", "/", "OP", null},
+                {"->", "->", "OP", null},
+                {"<>", "<>", "OP", null},
+                {"=", "=", "OP", null},
+                {"<", "<", "OP", null},
+                {">", ">", "OP", null}
             },
             new String [] {
-                "Lexema", "Identificador", "Categoría"
+                "Lexema", "Identificador", "Categoría", "Tipo de dato"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
