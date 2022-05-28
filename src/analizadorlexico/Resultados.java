@@ -260,7 +260,7 @@ public class Resultados extends javax.swing.JFrame {
                     }
                 }
 
-                if (!checarDeclaradas(variable.getNextNode())) {
+                if (!checarDeclaradas(variable.getNextNode().getNextNode().getNextNode().getNextNode(), variable.toString())) {
                     return;
                 }
 
@@ -273,7 +273,7 @@ public class Resultados extends javax.swing.JFrame {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("asign") == 0) {
-                if (!checarDeclaradas(nodo)) {
+                if (!checarDeclaradas(nodo, null)) {
                     return;
                 }
 
@@ -281,7 +281,7 @@ public class Resultados extends javax.swing.JFrame {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("comp") == 0) {
-                if (!checarDeclaradas(nodo)) {
+                if (!checarDeclaradas(nodo, null)) {
                     return;
                 }
 
@@ -289,7 +289,7 @@ public class Resultados extends javax.swing.JFrame {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("cic") == 0) {
-                if (!checarDeclaradas(nodo)) {
+                if (!checarDeclaradas(nodo, null)) {
                     return;
                 }
 
@@ -297,7 +297,7 @@ public class Resultados extends javax.swing.JFrame {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("imp") == 0) {
-                if (!checarDeclaradas(nodo)) {
+                if (!checarDeclaradas(nodo, null)) {
                     return;
                 }
 
@@ -305,7 +305,7 @@ public class Resultados extends javax.swing.JFrame {
                     return;
                 }
             } else if (objeto.getLexema().compareTo("leer") == 0) {
-                if (!checarDeclaradas(nodo)) {
+                if (!checarDeclaradas(nodo, null)) {
                     return;
                 }
             }
@@ -345,12 +345,17 @@ public class Resultados extends javax.swing.JFrame {
         return true;
     }
 
-    private boolean checarDeclaradas(DefaultMutableTreeNode nodo) {
+    private boolean checarDeclaradas(DefaultMutableTreeNode nodo, String excluir) {
         Enumeration nodos = nodo.depthFirstEnumeration();
         while (nodos.hasMoreElements()) {
             DefaultMutableTreeNode actual = (DefaultMutableTreeNode) nodos.nextElement();
             Token datos = (Token) actual.getUserObject();
             if (datos.getIdentificador().compareTo("V") == 0 && !datos.isDeclarada()) {
+                JOptionPane.showMessageDialog(null, "Variable \"" + datos.getLexema() + "\" no ha sido declarada", "Error semántico", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if (excluir != null && datos.getLexema().compareTo(excluir) == 0) {
+                datos.setDeclarada(false);
                 JOptionPane.showMessageDialog(null, "Variable \"" + datos.getLexema() + "\" no ha sido declarada", "Error semántico", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
