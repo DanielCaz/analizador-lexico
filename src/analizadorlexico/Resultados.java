@@ -105,7 +105,13 @@ public class Resultados extends javax.swing.JFrame {
         DefaultMutableTreeNode nodosTokens = new DefaultMutableTreeNode(new Token("prog", "prog", null));
 
         while (!entrada.isEmpty()) {
+            System.out.println("\n"
+                    + "Pila: " + pila
+                    + "\nEntrada: " + Helpers.entradaToString(entrada));
+
+            System.out.printf("Comparando \"%s\" con \"%s\"%n", entrada.getFirst().getIdentificador(), pila.peek());
             if (entrada.getFirst().getIdentificador().compareTo(pila.peek()) == 0) { //El primero de la entrada y lo más arriba de la pila son iguales
+                System.out.printf("Removiendo \"%s\" de la pila y entrada%n", pila.peek());
                 entrada.removeFirst();
                 pila.pop();
 
@@ -113,9 +119,11 @@ public class Resultados extends javax.swing.JFrame {
             }
 
             String nombreFila = pila.peek();
+            System.out.printf("Consultando fila \"%s\" y columna \"%s\" de la tabla sintáctica%n", pila.peek(), entrada.getFirst().getIdentificador());
             Hashtable<String, String> fila = tabla.get(nombreFila); //Consultando fila de la tabla
             if (fila != null) {
                 if (fila.containsKey(entrada.getFirst().getIdentificador())) { //Se encontró la fila y columna en la tabla
+                    System.out.printf("Cambiando \"%s\" por \"%s\" en la pila%n", pila.peek(), fila.get(entrada.getFirst().getIdentificador()));
                     String copia = pila.peek();
                     pila.pop();
                     String[] produccion = fila.get(entrada.getFirst().getIdentificador()).split(" ");
@@ -276,7 +284,7 @@ public class Resultados extends javax.swing.JFrame {
                 if (!checarDeclaradas(nodo)) {
                     return;
                 }
-                
+
                 if (!checarTipos(nodo)) {
                     return;
                 }
@@ -284,7 +292,7 @@ public class Resultados extends javax.swing.JFrame {
                 if (!checarDeclaradas(nodo)) {
                     return;
                 }
-                
+
                 if (!checarTipos(nodo)) {
                     return;
                 }
@@ -292,7 +300,7 @@ public class Resultados extends javax.swing.JFrame {
                 if (!checarDeclaradas(nodo)) {
                     return;
                 }
-                
+
                 if (!checarTipos(nodo)) {
                     return;
                 }
@@ -556,7 +564,7 @@ public class Resultados extends javax.swing.JFrame {
         simbolos.put("+", new Token("+", "+", "OP"));
         simbolos.put("-", new Token("-", "-", "OP"));
         simbolos.put("*", new Token("*", "*", "OP"));
-        simbolos.put("/", new Token("/", "*", "OP"));
+        simbolos.put("/", new Token("/", "/", "OP"));
         simbolos.put("->", new Token("->", "->", "OP"));
         simbolos.put("<>", new Token("<>", "<>", "OP"));
         simbolos.put("=", new Token("=", "=", "OP"));
@@ -587,7 +595,7 @@ public class Resultados extends javax.swing.JFrame {
         simbolos.put("+", new Token("+", "+", "OP"));
         simbolos.put("-", new Token("-", "-", "OP"));
         simbolos.put("*", new Token("*", "*", "OP"));
-        simbolos.put("/", new Token("/", "*", "OP"));
+        simbolos.put("/", new Token("/", "/", "OP"));
         simbolos.put("->", new Token("->", "->", "OP"));
         simbolos.put("<>", new Token("<>", "<>", "OP"));
         simbolos.put("=", new Token("=", "=", "OP"));
