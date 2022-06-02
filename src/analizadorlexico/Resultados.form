@@ -161,7 +161,32 @@
                   <Data value="OP"/>
                   <Data value="OP"/>
                 </Column>
-                <Column editable="false" title="Tipo de dato" type="java.lang.Object"/>
+                <Column editable="false" title="Tipo de dato" type="java.lang.Object">
+                  <Data value="Int"/>
+                  <Data value="Float"/>
+                  <Data value="Str"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                  <Data value="null"/>
+                </Column>
               </Table>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

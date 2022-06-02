@@ -52,17 +52,17 @@ public class Token {
     @Override
     public String toString() {
         String str = "";
-        
-        if (identificador.compareTo("V") == 0) {
+
+        if (identificador.compareTo("V") == 0 || identificador.compareTo("N") == 0 || identificador.compareTo("F") == 0) {
             str += lexema;
         } else {
             str += identificador;
         }
-        
+
         if (tipoDato != null) {
             str += " [" + tipoDato + "]";
         }
-        
+
         return str;
     }
 

@@ -163,11 +163,12 @@ public class Resultados extends javax.swing.JFrame {
                                             nodo.add(new DefaultMutableTreeNode(entrada.getFirst()));
                                         } else {
                                             if (prod.compareTo("N") == 0) {
-                                                Token aAgregar = new Token(prod, prod, null);
+                                                Token aAgregar = entrada.getFirst();
                                                 aAgregar.setTipoDato("Int");
                                                 nodo.add(new DefaultMutableTreeNode(aAgregar));
+                                                System.out.println();
                                             } else if (prod.compareTo("F") == 0) {
-                                                Token aAgregar = new Token(prod, prod, null);
+                                                Token aAgregar = entrada.getFirst();
                                                 aAgregar.setTipoDato("Float");
                                                 nodo.add(new DefaultMutableTreeNode(aAgregar));
                                             } else {
@@ -636,9 +637,9 @@ public class Resultados extends javax.swing.JFrame {
 
         jTableSimbolos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Int", "I", "PR", null},
-                {"Float", "F", "PR", null},
-                {"Str", "S", "PR", null},
+                {"Int", "I", "PR", "Int"},
+                {"Float", "F", "PR", "Float"},
+                {"Str", "S", "PR", "Str"},
                 {"var", "var", "PR", null},
                 {"print", "print", "PR", null},
                 {"input", "input", "PR", null},
