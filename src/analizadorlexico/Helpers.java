@@ -9,9 +9,7 @@ import java.util.LinkedList;
 public class Helpers {
     public static String entradaToString(LinkedList<Token> entrada) {
         String str = "[";
-        for (Token token : entrada) {
-            str += token.getIdentificador() + ", ";
-        }
+        str = entrada.stream().map((token) -> token.getIdentificador() + ", ").reduce(str, String::concat);
         str = str.substring(0, str.length() - 2) + "]";
         return str;
     }
