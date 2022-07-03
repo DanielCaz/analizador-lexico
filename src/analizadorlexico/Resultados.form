@@ -82,7 +82,7 @@
         <Component class="javax.swing.JTable" name="jTableSimbolos">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="24">
+              <Table columnCount="4" rowCount="22">
                 <Column editable="false" title="Lexema" type="java.lang.String">
                   <Data value="Int"/>
                   <Data value="Float"/>
@@ -95,8 +95,6 @@
                   <Data value="endCompare"/>
                   <Data value="loop"/>
                   <Data value="endLoop"/>
-                  <Data value="programStart"/>
-                  <Data value="programEnd"/>
                   <Data value="~"/>
                   <Data value=":"/>
                   <Data value="+"/>
@@ -121,8 +119,6 @@
                   <Data value="endCompare"/>
                   <Data value="loop"/>
                   <Data value="endLoop"/>
-                  <Data value="programStart"/>
-                  <Data value="programEnd"/>
                   <Data value="~"/>
                   <Data value=":"/>
                   <Data value="+"/>
@@ -136,8 +132,6 @@
                   <Data value="&gt;"/>
                 </Column>
                 <Column editable="false" title="Categor&#xed;a" type="java.lang.String">
-                  <Data value="PR"/>
-                  <Data value="PR"/>
                   <Data value="PR"/>
                   <Data value="PR"/>
                   <Data value="PR"/>
@@ -165,8 +159,6 @@
                   <Data value="Int"/>
                   <Data value="Float"/>
                   <Data value="Str"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
                   <Data value="null"/>
                   <Data value="null"/>
                   <Data value="null"/>
